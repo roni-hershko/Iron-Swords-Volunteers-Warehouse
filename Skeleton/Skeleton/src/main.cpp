@@ -7,7 +7,7 @@ WareHouse* backup = nullptr;
 
 int main(int argc, char** argv){
     if(argc!=2){
-        std::cout << "usage: warehouse <config_path>" << std::endl;
+        std::cout << "usage: warehouse <config_path> 123" << std::endl;
         return 0;
     }
     string configurationFile = argv[1];
