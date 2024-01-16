@@ -34,7 +34,6 @@ class Volunteer {
 
 };
 
-
 class CollectorVolunteer: public Volunteer {
 
     public:
