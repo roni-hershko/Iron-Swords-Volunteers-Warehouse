@@ -60,7 +60,7 @@ bool CollectorVolunteer::decreaseCoolDown() {
 }
 
 bool CollectorVolunteer::hasOrdersLeft() const {
-    return false; //always false for CollectorVolunteer
+    return true; //always true for CollectorVolunteer
 }
 
 bool CollectorVolunteer::canTakeOrder(const Order& order) const {
