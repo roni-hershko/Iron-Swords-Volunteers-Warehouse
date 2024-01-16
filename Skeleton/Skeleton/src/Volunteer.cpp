@@ -1,5 +1,37 @@
 #include "../Volunteer.h"
 
+// Copy Constructor
+Volunteer::Volunteer(const Volunteer& other) :
+id(other.id), name(other.name), completedOrderId(other.completedOrderId), activeOrderId(other.activeOrderId) {}
+
+// Assignment Operator
+Volunteer& Volunteer::operator=(const Volunteer& other) {
+    if (this != &other) {
+        id = other.id;
+        name = other.name;
+        completedOrderId = other.completedOrderId;
+        activeOrderId = other.activeOrderId;
+    }
+    return *this;
+}
+
+// Destructor
+Volunteer::~Volunteer() {}
+
+// Move Constructor
+Volunteer::Volunteer(Volunteer&& other) noexcept : id(std::move(other.id)), name(std::move(other.name)), completedOrderId(std::move(other.completedOrderId)), activeOrderId(std::move(other.activeOrderId)) {}
+
+// Move Assignment Operator
+Volunteer& Volunteer::operator=(Volunteer&& other) noexcept {
+    if (this != &other) {
+        id = std::move(other.id);
+        name = std::move(other.name);
+        completedOrderId = std::move(other.completedOrderId);
+        activeOrderId = std::move(other.activeOrderId);
+    }
+    return *this;
+}
+
 Volunteer::Volunteer(int id, const string& name) : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}
 
 int Volunteer::getId() const {
