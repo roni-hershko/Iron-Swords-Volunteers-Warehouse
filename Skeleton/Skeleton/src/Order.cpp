@@ -12,15 +12,15 @@ int Order::getCustomerId() const {
 }
 
 void Order::setStatus(OrderStatus status) {
-    this->status = status; // DO WE NEED TO USE THIS->? OR CAN WE JUST USE status = status?
+    this->status = status; 
 }
 
 void Order::setCollectorId(int collectorId) {
-    this->collectorId = collectorId; //DO WE NEED TO USE THIS->? OR CAN WE JUST USE collectorId = collectorId?
+    this->collectorId = collectorId; 
 }
 
 void Order::setDriverId(int driverId) {
-    this->driverId = driverId; //DO WE NEED TO USE THIS->? OR CAN WE JUST USE driverId = driverId?
+    this->driverId = driverId; 
 }
 
 int Order::getCollectorId() const {
@@ -36,8 +36,9 @@ OrderStatus Order::getStatus() const {
 }
 
 const string Order::toString() const {
-    // TO COMPLITE
-  
+    string order = "Order id #" + std::to_string(id) + " , Customer id #" + std::to_string(customerId) + 
+	", Distance: " + std::to_string(distance) + ", ";
+	 status(OrderStatus::PENDING), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER)
     return "";
 }
 
