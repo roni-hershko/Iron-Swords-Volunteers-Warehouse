@@ -1,8 +1,7 @@
-#include "../Volunteer.h"
+#include "../include/Volunteer.h"
 
-// Copy Constructor
-Volunteer::Volunteer(const Volunteer &other) : id(other.id), name(other.name), completedOrderId(other.completedOrderId), activeOrderId(other.activeOrderId) {}
-
+Volunteer::Volunteer(int id, const string &name) : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}
+ 
 // Assignment Operator
 Volunteer &Volunteer::operator=(const Volunteer &other)
 {
@@ -34,8 +33,6 @@ Volunteer &Volunteer::operator=(Volunteer &&other) noexcept
     }
     return *this;
 }
-
-Volunteer::Volunteer(int id, const string &name) : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}
 
 int Volunteer::getId() const
 {
