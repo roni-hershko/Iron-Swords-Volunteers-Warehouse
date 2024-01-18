@@ -83,3 +83,19 @@ string PrintOrderStatus::toString() const{
     return "PrintOrderStatus Error: "+getErrorMsg();
 }   
  
+
+//PrintCustomerStatus
+
+ PrintCustomerStatus::PrintCustomerStatus(int customerId){
+        this->customerId=customerId;
+    }//constructor
+
+void act(WareHouse &wareHouse) override{
+    if(wareHouse.getCustomer(customerId)==nullptr)
+        error("Customer does not exist");
+    else wareHouse.printCustomerStatus(this);
+}//print customer status, maybe error
+PrintCustomerStatus *clone() const override;
+string toString() const override;
+
+        const int customerId;
