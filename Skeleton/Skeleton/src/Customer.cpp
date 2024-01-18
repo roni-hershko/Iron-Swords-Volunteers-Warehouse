@@ -38,10 +38,11 @@ using std::vector;
     }; //return OrderId if order was added successfully, -1 otherwise
         
 
-    SoldierCustomer* SoldierCustomer::clone() const override{
+    SoldierCustomer* SoldierCustomer::clone() const {
         SoldierCustomer* solCus = new SoldierCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
         return solCus;
     }
+
     SoldierCustomer& SoldierCustomer::operator=(const SoldierCustomer &other){
         if(this != &other){
             this->id = other.id;
@@ -54,8 +55,7 @@ using std::vector;
     }
 
 
-
-    CivilianCustomer* CivilianCustomer::clone() const override{
+    CivilianCustomer* CivilianCustomer::clone() const{
         CivilianCustomer* civCus = new CivilianCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
         return civCus;
     }

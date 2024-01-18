@@ -25,9 +25,9 @@ class BaseAction{
         virtual BaseAction* clone() const=0;
 
     protected:
-        void complete();
-        void error(string errorMsg);
-        string getErrorMsg() const;
+        void complete(); //chage status to completed, if it was completed
+        void error(string errorMsg); //change status to error, and print
+        string getErrorMsg() const; //return the error message
 
     private:
         string errorMsg;
@@ -37,8 +37,8 @@ class BaseAction{
 class SimulateStep : public BaseAction {
 
     public:
-        SimulateStep(int numOfSteps);
-        void act(WareHouse &wareHouse) override;
+        SimulateStep(int numOfSteps);//constructor
+        void act(WareHouse &wareHouse) override;//simulate numOfSteps steps
         std::string toString() const override;
         SimulateStep *clone() const override;
 
@@ -48,11 +48,10 @@ class SimulateStep : public BaseAction {
 
 class Order : public BaseAction {
     public:
-        Order(int id);
-        void act(WareHouse &wareHouse) override;
-        
-        Order *clone() const override;
+        Order(int id); //constructor
+        void act(WareHouse &wareHouse) override; //add order to warehouse, maybe error
         string toString() const override;
+        Order *clone() const override;
     private:
         const int customerId;
 };
@@ -60,8 +59,8 @@ class Order : public BaseAction {
 
 class AddCustomer : public BaseAction {
     public:
-        AddCustomer(string customerName, string customerType, int distance, int maxOrders);
-        void act(WareHouse &wareHouse) override;
+        AddCustomer(string customerName, string customerType, int distance, int maxOrders);//constructor
+        void act(WareHouse &wareHouse) override; //add customer to warehouse, never error
         AddCustomer *clone() const override;
         string toString() const override;
     private:
@@ -75,8 +74,8 @@ class AddCustomer : public BaseAction {
 
 class PrintOrderStatus : public BaseAction {
     public:
-        PrintOrderStatus(int id);
-        void act(WareHouse &wareHouse) override;
+        PrintOrderStatus(int id);//constructor
+        void act(WareHouse &wareHouse) override;//print order status, maybe error   
         PrintOrderStatus *clone() const override;
         string toString() const override;
     private:
@@ -85,8 +84,8 @@ class PrintOrderStatus : public BaseAction {
 
 class PrintCustomerStatus: public BaseAction {
     public:
-        PrintCustomerStatus(int customerId);
-        void act(WareHouse &wareHouse) override;
+        PrintCustomerStatus(int customerId);   //constructor
+        void act(WareHouse &wareHouse) override;//print customer status, maybe error
         PrintCustomerStatus *clone() const override;
         string toString() const override;
     private:
@@ -96,8 +95,8 @@ class PrintCustomerStatus: public BaseAction {
 
 class PrintVolunteerStatus : public BaseAction {
     public:
-        PrintVolunteerStatus(int id);
-        void act(WareHouse &wareHouse) override;
+        PrintVolunteerStatus(int id);//constructor
+        void act(WareHouse &wareHouse) override; //print volunteer status, maybe error
         PrintVolunteerStatus *clone() const override;
         string toString() const override;
     private:
@@ -107,8 +106,8 @@ class PrintVolunteerStatus : public BaseAction {
 
 class PrintActionsLog : public BaseAction {
     public:
-        PrintActionsLog();
-        void act(WareHouse &wareHouse) override;
+        PrintActionsLog();//constructor
+        void act(WareHouse &wareHouse) override;//print actions log, never error
         PrintActionsLog *clone() const override;
         string toString() const override;
     private:
@@ -116,16 +115,16 @@ class PrintActionsLog : public BaseAction {
 
 class Close : public BaseAction {
     public:
-        Close();
-        void act(WareHouse &wareHouse) override;
+        Close();//constructor
+        void act(WareHouse &wareHouse) override;//close warehouse, never error
         string toString() const override;
     private:
 };
 
 class BackupWareHouse : public BaseAction {
     public:
-        BackupWareHouse();
-        void act(WareHouse &wareHouse) override;
+        BackupWareHouse();//constructor
+        void act(WareHouse &wareHouse) override;//backup warehouse, never error, if has one already, just replace pointer never error
         BackupWareHouse *clone() const override;
         string toString() const override;
     private:
@@ -134,8 +133,8 @@ class BackupWareHouse : public BaseAction {
 
 class RestoreWareHouse : public BaseAction {
     public:
-        RestoreWareHouse();
-        void act(WareHouse &wareHouse) override;
+        RestoreWareHouse();//constructor
+        void act(WareHouse &wareHouse) override;//change warehouse to the backup one, never error
         RestoreWareHouse *clone() const override;
         string toString() const override;
     private:
