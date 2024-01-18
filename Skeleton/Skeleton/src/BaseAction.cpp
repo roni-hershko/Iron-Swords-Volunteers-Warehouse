@@ -5,6 +5,7 @@
 using std::string;
 using std::vector;
 
+//base action
 BaseAction::BaseAction():errorMsg("<error_msg>"),status(ActionStatus::ERROR){}
 void BaseAction::complete(){
     status=ActionStatus::COMPLETED;
@@ -37,15 +38,15 @@ Order *Order::clone() const{
     
      return new Order(customerId);
 }
-   
-   
+
+
+ //add customer  
 AddCustomer::AddCustomer(string customerName, string customerType, int distance, int maxOrders)
     :customerName(customerName), distance(distance),  maxOrders(maxOrders){
         if(customerType.at(0)=='c' || customerType.at(0)=='C') 
              this->customerType = CustomerType::Civilian;
         else this->customerType = CustomerType::Soldier;
     }//constructor
-
 
 void customerName::act(WareHouse &wareHouse){
     wareHouse.addCustomer(this);
@@ -54,9 +55,31 @@ void customerName::act(WareHouse &wareHouse){
 customerName *AddCustomer::clone() const{
     return new AddCustomer(customerName, customerType,  distance,  maxOrders);
 }
+
 string customerName::toString() const{
     if(getStatus()==ActionStatus::COMPLETED)
         return "AddCustomer Completed";
     return "AddCustomer Error: "+getErrorMsg();
 }
 
+
+
+//PrintOrderStatus
+PrintOrderStatus(int id):orderId(id){}//constructor
+
+void PrintOrderStatus::act(WareHouse &wareHouse){
+    if(wareHouse.getOrder(orderId)==nullptr)
+        error("Order does not exist");
+    else wareHouse.printOrderStatus(this);
+} //print order status, maybe error 
+
+PrintOrderStatus *PrintOrderStatus::clone() const{
+    return new PrintOrderStatus(orderId);
+}
+
+string PrintOrderStatus::toString() const{
+    if(getStatus()==ActionStatus::COMPLETED)
+        return "PrintOrderStatus Completed";
+    return "PrintOrderStatus Error: "+getErrorMsg();
+}   
+ 
