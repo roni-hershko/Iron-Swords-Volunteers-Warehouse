@@ -7,6 +7,7 @@
 #include "../include/Customer.h"
 #include "../include/BaseAction.h"
 
+//DELETETHE PRIVIUS ONE
 WareHouse::WareHouse(const string &configFilePath) : isOpen(true), actionsLog(), volunteers(), pendingOrders(), vol(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
 {
     ifstream configFile(configFilePath);
