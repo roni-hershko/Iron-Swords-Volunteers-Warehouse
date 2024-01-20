@@ -20,12 +20,20 @@ class WareHouse {
         const vector<BaseAction*> &getActionsLog() const;
         void addOrder(Order* order);
         void addAction(BaseAction* action);
+        void addVolunteer(Volunteer* volunteer); //new method that adds a volunteer to the warehouse
+        void addCustomer(Customer* customer); //new method that adds a customer to the warehouse
         void printActionsLogs();
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
         Order &getOrder(int orderId) const;
         void close();
         void open();
+        int getCustomerCounter();
+        int getVolunteerCounter();
+        // maybe not needed
+        vector<Order*> getPendingOrders(); //new method that returns the pending orders
+        vector<Order*> getCompletedOrders(); //new method that returns the completed orders
+        vector<Order*> getVol(); //new method that returns the orders that are been worked by volunteers
 
     private:
         bool isOpen;
