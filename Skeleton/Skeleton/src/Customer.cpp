@@ -25,38 +25,46 @@ using std::vector;
          return false;
     } 
     
-    vector<int>& Customer::getOrders() const { // need to check!!!!!!!!!
-        return ordersId;
-    }
+
+    const vector<int>& Customer::getOrdersIds() const { // need to check!!!!!!!!!
+        const vector<int> copyOrdersId=ordersId;
+        return copyOrdersId;   
+     }
     
     int Customer::addOrder(int orderId){
-        if(ordersId.size() < maxOrders){
+        if(canMakeOrder()){
             ordersId.push_back(orderId);
             return orderId;
         }
         return -1;
     }; //return OrderId if order was added successfully, -1 otherwise
         
-
+    // Copy Constructor 
     SoldierCustomer* SoldierCustomer::clone() const {
-        SoldierCustomer* solCus = new SoldierCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
-        return solCus;
-    }
-
-    SoldierCustomer& SoldierCustomer::operator=(const SoldierCustomer &other){
-        if(this != &other){
-            this->id = other.id;
-            this->name = other.name;
-            this->locationDistance = other.locationDistance;
-            this->maxOrders = other.maxOrders;
-            this->ordersId = other.ordersId;
+         SoldierCustomer* newCcus= new SoldierCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
+        for(int i=0; i<getOrdersIds().size(); i++){
+            newCcus->addOrder(getOrdersIds()[i]);
         }
-        return *this;
+        return newCcus;
     }
 
-
+    // Copy Constructor
     CivilianCustomer* CivilianCustomer::clone() const{
-        CivilianCustomer* civCus = new CivilianCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
-        return civCus;
+       CivilianCustomer* newCcus= new CivilianCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
+        for(int i=0; i<getOrdersIds().size(); i++){
+            newCcus->addOrder(getOrdersIds()[i]);
+        }
+        return newCcus;
     }
+        
+
+// Destructor
+Customer::~Customer() {}
+
+// Move Constructor
+Customer::Customer(Customer &&other) noexcept : 
+    id(std::move(other.id)), name(std::move(other.name)), locationDistance(std::move(other.locationDistance)), maxOrders(std::move(other.maxOrders)), ordersId(std::move(other.ordersId)) {}
+
+// Move Assignment Operator and assignment operator- not possible because of const members
+        
         
