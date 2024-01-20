@@ -123,8 +123,14 @@ void WareHouse::open(){
 }
 
 int WareHouse::getCustomerCounter(){
-    return customerCounter;
+    customerCounter++;
+    return customerCounter-1;
 }
 int WareHouse::getVolunteerCounter(){
-    return volunteerCounter;
+    volunteerCounter++;
+    return volunteerCounter-1;
 }
+int WareHouse::getOrderCounter(){
+    orderCounter++;
+    return orderCounter-1;
+}//new metod that returns the order counter

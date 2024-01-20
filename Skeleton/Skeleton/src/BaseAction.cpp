@@ -28,10 +28,14 @@ string BaseAction::getErrorMsg() const{
 AddOrder::AddOrder(int id) : customerId(id){} //constructor
 
 void AddOrder::act(WareHouse &wareHouse){
-    if(wareHouse.getCustomer(customerId) == nullptr || &wareHouse.getCustomer(customerId) == NULL)
+    if(wareHouse.getCustomer(customerId) == nullptr || &wareHouse.getCustomer(customerId) == NULL){
         BaseAction::error("Customer does not exist");
+    }
     else if (wareHouse.getCustomer(customerId).addOrder(customerId)==-1)
         BaseAction::error("Customer reached max orders");
+    Order* order = new Order(wareHouse.getOrderCounter(), customerId, getCustomer(customerId).getDistance());
+    order.setStatus(OrderStatus::PENDING);
+    wareHouse.getPendingOrders().push_back(order);
 } //add order to warehouse, maybe error
 
 string AddOrder::toString() const{
@@ -44,22 +48,23 @@ AddOrder *AddOrder::clone() const{
 
 //add customer
 AddCustomer::AddCustomer(string customerName, string customerType, int distance, int maxOrders) 
-    : customerName(customerName),distance(distance), maxOrders(maxOrders){} //constructor    
+    : customerName(customerName),distance(distance), maxOrders(maxOrders){
+        customerId=wareHouse.getCustomerCounter();
+    } //constructor    
 
 void AddCustomer::act(WareHouse &wareHouse){
      if(CustomerType(customerType)==CustomerType::Civilian){
-           wareHouse.addCustomer(new CivilianCustomer(wareHouse.getCustomerCounter() ,customerName, distance, maxOrders));
+           wareHouse.addCustomer(new CivilianCustomer(customerId ,customerName, distance, maxOrders));
      }
      else {
-            wareHouse.addCustomer(new SoldierCustomer (wareHouse.getCustomerCounter(),customerName, distance, maxOrders));
+            wareHouse.addCustomer(new SoldierCustomer (customerId,customerName, distance, maxOrders));
      }   
 } //add customer to warehouse, never error
 
 AddCustomer *AddCustomer::clone() const{
-    if(CustomerType(customerType)==CustomerType::Civilian){  
-        return new AddCustomer(customerName, "Civilian",  distance,  maxOrders);
-    }
-    return new AddCustomer(customerName, "Soldier",  distance,  maxOrders);
+    AddCustomer* newCcus= new AddCustomer(customerName, customerType,  distance,  maxOrders);
+    newCcus->customerId=customerId;
+    return newCcus;
 }
 
 string AddCustomer::toString() const{
@@ -76,7 +81,7 @@ PrintOrderStatus::PrintOrderStatus(int id) : orderId(id){}//constructor
 
 void PrintOrderStatus::act(WareHouse &wareHouse){
     if(wareHouse.getOrder(orderId)==(nullptr))
-        error("Order does not exist");
+        error("Order doesn't exist");
     else{
         cout<< "OrderId <" <<orderId<< ">\n" 
         << "OrderStatus <" <<OrderStatus(wareHouse.getOrder(orderId).getStatus())<< ">\n" 
@@ -91,10 +96,6 @@ PrintOrderStatus *PrintOrderStatus::clone() const{
 }
 
 string PrintOrderStatus::toString() const{ //need to check
-    if(getStatus()==ActionStatus::COMPLETED)
-        return "PrintOrderStatus Completed";
-    return "PrintOrderStatus Error: "+getErrorMsg();
-    
 }   
  
 
@@ -105,9 +106,9 @@ PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId
 
 void PrintCustomerStatus::act(WareHouse &wareHouse){
     if(wareHouse.getCustomer(customerId)==nullptr)
-        error("Customer does not exist");
+        error("Customer doesn't exist");
     else{
-        cout<<"customerId : "+wareHouse.(getCustomer(customerId)) +"\n";
+        cout<<"customerId : "+ customerId +"\n";
         vector<Order*> orderList=wareHouse.((getCustomer(customerId))->getOrderList());
         for(int i=0; i < orderList.size(); i++){
              cout<<"orderId :" + (*orderList[i]).getId() +"\n orderStatus : "+ OrderStatus((*orderList[i]).getStatus());

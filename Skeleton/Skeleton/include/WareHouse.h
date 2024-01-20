@@ -28,6 +28,7 @@ class WareHouse {
         void open();
         int getCustomerCounter();
         int getVolunteerCounter();
+        int getOrderCounter();//new metod that returns the order counter
         // maybe not needed
         vector<Order*> getPendingOrders(); //new method that returns the pending orders
         vector<Order*> getCompletedOrders(); //new method that returns the completed orders
@@ -41,6 +42,7 @@ class WareHouse {
         vector<Order*> inProcessOrders;
         vector<Order*> completedOrders;
         vector<Customer*> customers;
-        int customerCounter; //For assigning unique customer IDs
-        int volunteerCounter; //For assigning unique volunteer IDs
+        int customerCounter=0; //For assigning unique customer IDs
+        int volunteerCounter=0; //For assigning unique volunteer IDs
+        int orderCounter=0; //For assigning unique order IDs, new field
 };
