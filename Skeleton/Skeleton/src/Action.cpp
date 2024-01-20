@@ -2,31 +2,71 @@
 #include <string>
 #include <vector>
 #include "WareHouse.h"
+#include <iostream> // Added by roni
 using std::string;
 using std::vector;
 
 
-BaseAction:BaseAction():errorMsg("<error_msg>"),status(ActionStatus::ERROR){}
-void BaseAction:complete(){
+//base action
+BaseAction::BaseAction()
+	: errorMsg("<error_msg>"),status(ActionStatus::ERROR){} //constructor
+
+void BaseAction::complete(){
     status=ActionStatus::COMPLETED;
 }//chage status to completed, if it was completed
 
-void BaseAction:error(string errorMsg){
+void BaseAction::error(string errorMsg){
     status=ActionStatus::ERROR;
     this->errorMsg=errorMsg;
 }//change status to error, and print
 
-string BaseAction:getErrorMsg() const{
+string BaseAction::getErrorMsg() const{
     return errorMsg;
 } //return the error message
 
 
-//order
+
+
+//SimulateStep
+SimulateStep::SimulateStep(int numOfSteps):numOfSteps(numOfSteps){} //constructor
+
+void SimulateStep::act(WareHouse &wareHouse){
+	for(int i=0; i<numOfSteps; i++){
+		//complete
+	
+	}
+	std::cout << toString() << std::endl; //i dont know if its gonna work
+} //step the warehouse, never error	
+
+SimulateStep *SimulateStep::clone() const{
+	return new SimulateStep(numOfSteps);
+}		
+
+string SimulateStep::toString() const{
+	if(getStatus()==ActionStatus::COMPLETED)
+		return "SimulateStep Completed";
+	return "SimulateStep Error: "+getErrorMsg();
+}
+
+
+
+
+//AddOrder
 AddOrder::AddOrder(int id):customerId(id){} //constructor
 
 void AddOrder::act(WareHouse &wareHouse){
-    wareHouse.addOrder(this);
+    if(wareHouse.getCustomer(customerId) == nullptr || &wareHouse.getCustomer(customerId) == NULL)
+        BaseAction::error("Canot place this order");
+    else if (wareHouse.getCustomer(customerId).addOrder(customerId)==-1)
+        BaseAction::error("Canot place this order");
+	else {
+   		wareHouse.addOrder(this);
+		wareHouse.get
+	}
+		//pending status
+		//what the constructor need
 } //add order to warehouse, maybe error
+
 string AddOrder::toString() const{
     if(getStatus()==ActionStatus::COMPLETED)
         return "Order Completed";
@@ -88,7 +128,6 @@ string PrintOrderStatus::toString() const{
  PrintCustomerStatus::PrintCustomerStatus(int customerId){
         this->customerId=customerId;
     }//constructor
-
 void act(WareHouse &wareHouse) override{
     if(wareHouse.getCustomer(customerId)==nullptr)
         error("Customer does not exist");
@@ -102,35 +141,26 @@ string toString() const override;
 
 
 //PrintVolunteerStatus
+PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id){} //constructor
 
-PrintVolunteerStatus :: PrintVolunteerStatus(int id) : VolunteerId(id){}//constructor
+void act(WareHouse &wareHouse) {
+	if(wareHouse.getVolunteer(volunteerId)==nullptr)
+		error("Volunteer does not exist");
+	else wareHouse.printVolunteerStatus(this);
+}//print volunteer status, maybe error
 
-void PrintVolunteerStatus ::act(WareHouse &wareHouse){
-	if(wareHouse.getVolunteer(VolunteerId)==nullptr)
-		error("Volunteer doesnt exist");
-
-	else {
-		cout/n << "VolunteerID: " << VolunteerId <<; 	//print volunteer id	
-		cout/n << "isBusy: " wareHouse.getVolunteer(VolunteerId)->isBusy()<<; //print is busy
-
-		if (wareHouse.getVolunteer(VolunteerId)->isBusy() == false){ //if the volunteer is not busy
-			cout/n << "OrderID: None " <<; 
-			cout/n << "timeLeft: None " <<; 
-			cout/n << "ordersLeft: None " <<; 
-		}
-		else if (wareHouse.getVolunteer(VolunteerId)->getTimeLeft() != nullptr){ //if the volunteer is a collector
-			cout/n << "OrderID: " wareHouse.getVolunteer(VolunteerId)->getOrder()->getId()<<;
-			cout/n << "timeLeft: " << wareHouse.getVolunteer(VolunteerId)->getTimeLeft() <<; 
-			if(wareHouse.getVolunteer(VolunteerId)->getDistanceLeft() != nullptr)
-				cout/n << "ordersLeft: " << wareHouse.getVolunteer(VolunteerId)->getDistanceLeft() <<;
-				// USING DISTANCE LEFT AND NOT MAX Distance AS WRITTEN IN THE PAPER
-		}
-		else { //if the volunteer is a driver
-			cout/n << "OrderID: " wareHouse.getVolunteer(VolunteerId)->getOrder()->getId()<<;
-			cout/n << "distanceLeft: " << wareHouse.getVolunteer(VolunteerId)->getDistanceLeft() <<; 
-			if (wareHouse.getVolunteer(VolunteerId)->getNumOrdersLeft() != nullptr)
-				cout/n << "ordersLeft: " << wareHouse.getVolunteer(VolunteerId)->getNumOrdersLeft() <<;
-				// USING ORDERS LEFT AND NOT MAX ORDER AS WRITTEN IN THE PAPER
-		}
-	}	
+PrintVolunteerStatus *clone() const{
+	return new PrintVolunteerStatus(volunteerId);
 }
+
+
+string toString() const{
+	if(getStatus()==ActionStatus::COMPLETED)
+		return "PrintVolunteerStatus Completed";
+	return "PrintVolunteerStatus Error: "+getErrorMsg();
+}
+
+
+//PrintActionsLog
+
+
