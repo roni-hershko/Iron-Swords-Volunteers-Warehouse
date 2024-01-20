@@ -34,10 +34,11 @@ class Volunteer {
 
 };
 
+
 class CollectorVolunteer: public Volunteer {
 
     public:
-        CollectorVolunteer(int id, string name, int coolDown);
+        CollectorVolunteer(int id, const string &name, int coolDown);
         CollectorVolunteer *clone() const override;
         void step() override;
         int getCoolDown() const;
@@ -56,7 +57,7 @@ class CollectorVolunteer: public Volunteer {
 class LimitedCollectorVolunteer: public CollectorVolunteer {
 
     public:
-        LimitedCollectorVolunteer(int id, string name, int coolDown ,int maxOrders);
+        LimitedCollectorVolunteer(int id, const string &name, int coolDown ,int maxOrders);
         LimitedCollectorVolunteer *clone() const override;
         bool hasOrdersLeft() const override;
         bool canTakeOrder(const Order &order) const override;
@@ -74,7 +75,7 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
 class DriverVolunteer: public Volunteer {
 
     public:
-        DriverVolunteer(int id, string name, int maxDistance, int distancePerStep);
+        DriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep);
         DriverVolunteer *clone() const override;
 
         int getDistanceLeft() const;
@@ -83,7 +84,7 @@ class DriverVolunteer: public Volunteer {
         bool decreaseDistanceLeft(); //Decrease distanceLeft by distancePerStep,return true if distanceLeft<=0,false otherwise
         bool hasOrdersLeft() const override;
         bool canTakeOrder(const Order &order) const override; // Signal if the volunteer is not busy and the order is within the maxDistance
-        void acceptOrder(const Order &order) override; // Reset distanceLeft to maxDistance
+        void acceptOrder(const Order &order) override; // Assign distanceLeft to order's distance
         void step() override; // Decrease distanceLeft by distancePerStep
         string toString() const override;
 
@@ -101,8 +102,8 @@ class LimitedDriverVolunteer: public DriverVolunteer {
         int getMaxOrders() const;
         int getNumOrdersLeft() const;
         bool hasOrdersLeft() const override;
-        bool canTakeOrder(const Order &order) const override; // Signal if the volunteer is not busy, the order is within the maxDistance and have orders left
-        void acceptOrder(const Order &order) override; // Reset distanceLeft to maxDistance and decrease ordersLeft
+        bool canTakeOrder(const Order &order) const override; // Signal if the volunteer is not busy, the order is within the maxDistance.
+        void acceptOrder(const Order &order) override; // Assign distanceLeft to order's distance and decrease ordersLeft
         string toString() const override;
 
     private:
