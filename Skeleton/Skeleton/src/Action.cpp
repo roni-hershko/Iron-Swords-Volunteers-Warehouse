@@ -149,12 +149,12 @@ void act(WareHouse &wareHouse) {
 	else wareHouse.printVolunteerStatus(this);
 }//print volunteer status, maybe error
 
-PrintVolunteerStatus *clone() const{
-	return new PrintVolunteerStatus(volunteerId);
+PrintVolunteerStatus *SimulateStep::clone() const{
+	return new PrintVolunteerStatus(id);
 }
 
 
-string toString() const{
+string PrintVolunteerStatus::toString() const{
 	if(getStatus()==ActionStatus::COMPLETED)
 		return "PrintVolunteerStatus Completed";
 	return "PrintVolunteerStatus Error: "+getErrorMsg();
