@@ -72,7 +72,7 @@ void WareHouse::addOrder(Order* order){
     else if (order->getStatus()==OrderStatus::PENDING){
          pendingOrders.push_back(order);
     }
-    else vol.push_back(order);
+    else inProcessOrders.push_back(order);
 }
 
 void WareHouse::addAction(BaseAction* action){

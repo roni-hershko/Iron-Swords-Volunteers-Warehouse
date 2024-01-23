@@ -32,7 +32,7 @@ class WareHouse {
         // maybe not needed
         vector<Order*> getPendingOrders(); //new method that returns the pending orders
         vector<Order*> getCompletedOrders(); //new method that returns the completed orders
-        vector<Order*> getVol(); //new method that returns the orders that are been worked by volunteers
+        vector<Order*> getinProcessOrders(); //new method that returns the orders that are been worked by volunteers
 
     private:
         bool isOpen;
