@@ -12,18 +12,18 @@ BaseAction::BaseAction():errorMsg("<error_msg>"),status(ActionStatus::ERROR){}
 void BaseAction::complete(){
     status=ActionStatus::COMPLETED;
     actionLog.push_back("COMPLETED");
-}//chage status to completed, if it was completed
+}
 
 void BaseAction::error(string errorMsg){
     status=ActionStatus::ERROR;
     this->errorMsg=errorMsg;
     actionLog.push_back("ERROR");
 
-}//change status to error, and print
+}
 
 string BaseAction::getErrorMsg() const{
     return errorMsg;
-} //return the error message
+} 
 
 
 //simulate step
@@ -294,7 +294,6 @@ void BackupWareHouse::act(WareHouse &wareHouse){
         backup = wareHouse;
     }
 }//copy assignment operator
-
 
 BackupWareHouse *BackupWareHouse::clone() const {
 	return new BackupWareHouse();
