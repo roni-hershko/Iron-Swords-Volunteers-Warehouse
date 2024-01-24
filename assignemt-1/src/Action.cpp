@@ -26,8 +26,6 @@ string BaseAction::getErrorMsg() const{
 } //return the error message
 
 
-
-
 //simulate step
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps){} //constructor
 
@@ -61,7 +59,6 @@ void SimulateStep::act(WareHouse &wareHouse){
 			}
         }
 }
-
  	
 SimulateStep *SimulateStep::clone() const{
 	return new SimulateStep(numOfSteps);
@@ -70,11 +67,6 @@ SimulateStep *SimulateStep::clone() const{
 string SimulateStep::toString() const{
 	return "SimulateStep " + numOfSteps;
 }
-
-
-
-
-
 
 
 //AddOrder
@@ -102,11 +94,6 @@ string AddOrder::toString() const{
 AddOrder *AddOrder::clone() const{
     return new AddOrder(customerId);
 }
-
-
-
-
-
 
 
 //add customer
@@ -143,9 +130,6 @@ string AddCustomer::toString() const{
 }
 
 
-
-
-
 //PrintOrderStatus
 PrintOrderStatus::PrintOrderStatus(int id) : orderId(id){}//constructor
 
@@ -172,7 +156,6 @@ string PrintOrderStatus::toString() const{ //need to check
 }   
  
 
-
 //PrintCustomerStatus
 PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId){}//constructor
 
@@ -197,20 +180,19 @@ PrintCustomerStatus *PrintCustomerStatus::clone() const {
     return new PrintCustomerStatus(customerId);
 }
 
-string PrintCustomerStatus::toString() const{ //need to check
+string PrintCustomerStatus::toString() const{ 
 	return "CustomerStatus " + customerId + status;
 }
 
         
-
-
 //PrintVolunteerStatus
 PrintVolunteerStatus :: PrintVolunteerStatus(int id) : VolunteerId(id){}//constructor
 
 void PrintVolunteerStatus ::act(WareHouse &wareHouse){
-	if(wareHouse.getVolunteer(VolunteerId)==nullptr)
+	if(wareHouse.getVolunteer(VolunteerId)==nullptr){
 		error("Volunteer doesnt exist");
-
+		baseAction::error();
+	}
 	else {
 		cout << "VolunteerID:" << VolunteerId << endl; //print volunteer id	
 		cout << "isBusy: " wareHouse.getVolunteer(VolunteerId)->isBusy()<< endl; //print is busy
@@ -234,8 +216,8 @@ void PrintVolunteerStatus ::act(WareHouse &wareHouse){
 				cout << "ordersLeft:" << wareHouse.getVolunteer(VolunteerId)->getNumOrdersLeft() << endl;
 				// USING ORDERS LEFT AND NOT MAX ORDER AS WRITTEN IN THE PAPER
 		}
+		baseAction::complete();
 	}
-    baseAction::complete();
     baseAction::actionLog.push_back(toString());	
 }
 
@@ -248,17 +230,15 @@ string PrintVolunteerStatus::toString() const{
 }
 
 
-
-
-
-
 //PrintActionsLog
 PrintActionsLog::PrintActionsLog(){}//constructor
 
 void PrintActionsLog::act(WareHouse &wareHouse){
-	for(int i=0; i<wareHouse.actionsLog.size(); i++){ //להכניס לרשימה את כל הפעולות שנעשו 
-		cout<< wareHouse.operator[i]."\n"; // האם יש צורך למחוק את הפעולות
-	}
+	for(int i=0; i<wareHouse.actionsLog.size(); i++)
+		cout<< wareHouse.operator[i]."\n"; 
+	baseAction::complete();
+	baseAction::actionLog.push_back(toString());
+		
 } 
 
 PrintActionsLog *PrintActionsLog::clone() const{
@@ -266,12 +246,8 @@ PrintActionsLog *PrintActionsLog::clone() const{
 }
 
 string PrintActionsLog::toString() const{
-	return "PrintActionsLog" + status; 
+	return "log" + status; 
 }
-
-
-
-
 
 
 //close
@@ -282,23 +258,27 @@ void close::act(warehouse &wareHouse){
 		cout<< "order" wareHouse.getPendingOrders()[i]->getOrderCounter() + " " + wareHouse.getPendingOrders()[i]->getId() + " " + wareHouse.getPendingOrders()[i]->getCustomerId() + " " + wareHouse.getPendingOrders()[i]->getStatus() + "\n";
 	}
 	for(int i=0; i<wareHouse.getCompletedOrders().size(); i++){
-		cout<< wareHouse.getCompletedOrders()[i]->getOrderCounter() + " " + wareHouse.getCompletedOrders()[i]->getId() + " " + wareHouse.getCompletedOrders()[i]->getCustomerId() + " " + wareHouse.getCompletedOrders()[i]->getStatus() + "\n";
-	}
-	//free all memory
-	for(int i=0; i<wareHouse.getVolunteers().size(); i++){
-		delete wareHouse.getVolunteers()[i];
-	}
-	for(int i=0; i<wareHouse.getPendingOrders().size(); i++){
-		delete wareHouse.getPendingOrders()[i];
-	}
-	for(int i=0; i<wareHouse.getCompletedOrders().size(); i++){
-		delete wareHouse.getCompletedOrders()[i];
+		cout<< "order" wareHouse.getCompletedOrders()[i]->getOrderCounter() + " " + wareHouse.getCompletedOrders()[i]->getId() + " " + wareHouse.getCompletedOrders()[i]->getCustomerId() + " " + wareHouse.getCompletedOrders()[i]->getStatus() + "\n";
 	}
 	for(int i=0; i<wareHouse.getinProcessOrders().size(); i++){
-		delete wareHouse.getinProcessOrders()[i];
+		cout<< "order" wareHouse.getinProcessOrders()[i]->getOrderCounter() + " " + wareHouse.getinProcessOrders()[i]->getId() + " " + wareHouse.getinProcessOrders()[i]->getCustomerId() + " " + wareHouse.getinProcessOrders()[i]->getStatus() + "\n";
 	}
-	for(int i=0; i<wareHouse.getCustomers().size(); i++){
-		delete wareHouse.getCustomers()[i];
+	
+	//free all memory
+	for(int i=0; i<wareHouse.volunteers().size(); i++){
+		delete wareHouse.Volunteers()[i];
+	}
+	for(int i=0; i<wareHouse.PendingOrders().size(); i++){
+		delete wareHouse.PendingOrders()[i];
+	}
+	for(int i=0; i<wareHouse.CompletedOrders().size(); i++){
+		delete wareHouse.CompletedOrders()[i];
+	}
+	for(int i=0; i<wareHouse.inProcessOrders().size(); i++){
+		delete wareHouse.inProcessOrders()[i];
+	}
+	for(int i=0; i<wareHouse.Customers().size(); i++){
+		delete wareHouse.Customers()[i];
 	}
 
 	isOpen=false;
@@ -312,16 +292,12 @@ string close::toString() const{
 	return "close";
 }
 
-
-
-
-
-
-
 //backup warehouse
 extern WareHouse *backup;
 BackupWareHouse::BackupWareHouse(){}//constructor
-	backup = wareHouse; 
+
+void BackupWareHouse::act(WareHouse &wareHouse){
+	backup = wareHouse; //copyconstructor
 }
 
 BackupWareHouse *BackupWareHouse::clone() const {
@@ -334,15 +310,14 @@ string BackupWareHouse::toString() const {
 
 
 
-
-
-
-
 //restore warehouse
 RestoreWareHouse::RestoreWareHouse(){}//constructor
 
 void RestoreWareHouse::act(WareHouse &wareHouse){
-
+if(backup == nullptr)
+	error("No backup available");
+else
+	wareHouse = backup; //move assignment opertor
 }
 
 RestoreWareHouse *RestoreWareHouse::clone() const{
