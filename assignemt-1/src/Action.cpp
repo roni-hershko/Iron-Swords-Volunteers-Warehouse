@@ -61,8 +61,8 @@ void SimulateStep::act(WareHouse &wareHouse){
 				}
 			}
 			else { //if the volunteer is not busy
-				if(wareHouse.getVolunteers()[j]->getOrder() != nullptr){ //if the volunteer has an order
-					if(wareHouse.getVolunteers()[j]->getOrder()->getStatus() == OrderStatus::PENDING){ //if the order is pending
+				if(wareHouse.getVolunteers()[j]->getOrder() != nullptr) //if the volunteer has an order
+					if(wareHouse.getVolunteers()[j]->getOrder()->getStatus() == OrderStatus::PENDING) //if the order is pending
 			}
 		}
 	}
