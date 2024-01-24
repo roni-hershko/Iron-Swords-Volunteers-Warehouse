@@ -11,7 +11,7 @@
 #include <iostream> 
 using namespace std;
 
-//DELETETHE PRIVIUS ONE
+
 WareHouse::WareHouse(const string &configFilePath) : isOpen(true), actionsLog(), volunteers(), pendingOrders(), vol(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
 {
     ifstream configFile(configFilePath);
@@ -61,10 +61,6 @@ WareHouse::WareHouse(const string &configFilePath) : isOpen(true), actionsLog(),
 
 void WareHouse::start();
 
-const vector<BaseAction*> &WareHouse::getActionsLog() const{
-    return actionsLog;
-}
-
 void WareHouse::addOrder(Order* order){
     if(order->getStatus()==OrderStatus::COMPLETED){
         completedOrders.push_back(order);
@@ -89,11 +85,6 @@ void WareHouse::addCustomer(Customer* customer){
     customerCounter++;
 }; //new method that adds a customer to the warehouse
 
-void WareHouse::printActionsLogs(){
-    for(auto action:actionsLog)
-        std::cout<<action->toString()<<std::endl; // Use std::cout instead of cout
-}
-
 Customer &WareHouse::getCustomer(int customerId) const{ //מחפשת בתוך הרשימה?
     return *customers[customerId];
 }
@@ -110,6 +101,10 @@ Order &WareHouse::getOrder(int orderId) const{
     else return *completedOrders[orderId];
 }
 
+const vector<BaseAction*> &WareHouse::getActions() const{
+    return actionsLog;
+}
+
 void WareHouse::close(){// make sure no memory leaks, that method ends the program
     isOpen=false;
 for(auto penOr:pendingOrders)
@@ -123,14 +118,11 @@ void WareHouse::open(){
 }
 
 int WareHouse::getCustomerCounter(){
-    customerCounter++;
-    return customerCounter-1;
+    return customerCounter;
 }
 int WareHouse::getVolunteerCounter(){
-    volunteerCounter++;
-    return volunteerCounter-1;
+    return volunteerCounter;
 }
 int WareHouse::getOrderCounter(){
-    orderCounter++;
-    return orderCounter-1;
-}//new metod that returns the order counter
+    return orderCounter;
+}
