@@ -117,7 +117,7 @@ string CollectorVolunteer::toString() const{ //get ready for printVolunteerStatu
 
 
 //LimitedCollectorVolunteer
-LimitedCollectorVolunteer::LimitedCollectorVolunteer(int id, string name, int coolDown, int maxOrders)
+LimitedCollectorVolunteer::LimitedCollectorVolunteer(int id, const string &name, int coolDown, int maxOrders)
     : CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders) {}
 
 LimitedCollectorVolunteer *LimitedCollectorVolunteer::clone() const{
@@ -156,7 +156,7 @@ string LimitedCollectorVolunteer::toString() const{ //get ready for printVolunte
 
 
 //DriverVolunteer
-DriverVolunteer::DriverVolunteer(int id, string name, int maxDistance, int distancePerStep)
+DriverVolunteer::DriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep)
     : Volunteer(id, name), maxDistance(maxDistance), distancePerStep(distancePerStep), distanceLeft(0) {}
 
 DriverVolunteer *DriverVolunteer::clone() const{

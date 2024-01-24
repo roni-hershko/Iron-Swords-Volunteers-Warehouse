@@ -66,7 +66,7 @@ const string Order::toString() const { //ready for printOrderStatus function
 	else	
 		driver = std::to_string(driverId);
 
-	string str= "OrderId:" + std::to_string(id) + ", orderStatus:" + statusString + ", CustomerId:" + std::to_string(customerId) +
+	string str= "OrderId:" + std::to_string(id) + ", orderStatus:" + statusString + ", CustomerId:" + std::to_string(customerId) + ", distance" + std::to_string(distance) +
 				 ", collectorId:" + collector + ", driverId:" + driver;
 	return str;
- } //" Distance: " + std::to_string(distance)
+ } 
