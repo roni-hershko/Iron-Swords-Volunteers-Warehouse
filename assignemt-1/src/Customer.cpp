@@ -35,7 +35,7 @@ bool Customer::canMakeOrder() const {//Returns true if the customer didn't reach
     return false;
 } 
    
-const vector<int>& Customer::getOrdersIds() const { // need to check!!!!!!!!! why do we need to copy??
+const vector<int>& Customer::getOrdersIds() const { //maybe deep copy
     //const vector<int> copyOrdersId=ordersId;
     //return copyOrdersId;   
 	return ordersId;
@@ -43,7 +43,7 @@ const vector<int>& Customer::getOrdersIds() const { // need to check!!!!!!!!! wh
     
 int Customer::addOrder(int orderId){
     if(canMakeOrder()){
-        ordersId.push_back(orderId); //check if the order added to the top or the bottom of the list beacause we dont want orders to ge old 
+        ordersId.push_back(orderId); 
     	return orderId;
     }
     return -1;
@@ -52,20 +52,19 @@ int Customer::addOrder(int orderId){
 SoldierCustomer::SoldierCustomer(int id, const string &name, int locationDistance, int maxOrders)
 	: Customer(id, name, locationDistance, maxOrders) {}
 
-// Copy Constructor SoldierCustomer??
+
 SoldierCustomer* SoldierCustomer::clone() const {
-    SoldierCustomer* newCcus= new SoldierCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
+    SoldierCustomer* newScus= new SoldierCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
     for(int i=0; i<getOrdersIds().size(); i++){
-        newCcus->addOrder(getOrdersIds()[i]);
+        newScus->addOrder(getOrdersIds()[i]);
     }
-    return newCcus;
+    return newScus;
 }
 
 
 CivilianCustomer::CivilianCustomer(int id, const string &name, int locationDistance, int maxOrders)
 	: Customer(id, name, locationDistance, maxOrders) {}
 	
-// Copy Constructor CivilianCustomer???
 CivilianCustomer* CivilianCustomer::clone() const{
     CivilianCustomer* newCcus= new CivilianCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
     for(int i=0; i<getOrdersIds().size(); i++){
@@ -74,14 +73,5 @@ CivilianCustomer* CivilianCustomer::clone() const{
     return newCcus;
 }
         
-// Destructor
-Customer::~Customer() {}
-
-
-// Move Constructor
-Customer::Customer(Customer &&other) noexcept : 
-    id(std::move(other.id)), name(std::move(other.name)), locationDistance(std::move(other.locationDistance)), maxOrders(std::move(other.maxOrders)), ordersId(std::move(other.ordersId)) {}
-
-//Move Assignment Operator and assignment operator- not possible because of const members...
         
         

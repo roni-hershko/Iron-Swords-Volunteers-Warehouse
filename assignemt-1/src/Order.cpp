@@ -1,4 +1,4 @@
-#include "Order.h"
+#include <Order.h>
 
 Order::Order(int id, int customerId, int distance)
 	: id(id), customerId(customerId), distance(distance), status(OrderStatus::PENDING), collectorId(NO_VOLUNTEER), driverId(NO_VOLUNTEER) {}
@@ -9,6 +9,10 @@ int Order::getId() const {
 
 int Order::getCustomerId() const {
 	return customerId;
+}
+
+int Order::getDistance() const {
+    return distance;
 }
 
 void Order::setStatus(OrderStatus status) {
@@ -35,7 +39,7 @@ OrderStatus Order::getStatus() const {
     return status;
 }
 
-const string Order::toString() const { //ready for printOrderStatus function
+const string Order::toString() const { 
 
     string statusString;
     OrderStatus status; 

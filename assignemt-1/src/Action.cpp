@@ -2,30 +2,28 @@
 #include <string>
 #include <vector>
 #include <WareHouse.h>
+#include <Order.h>
 using std::string;
 using std::vector;
-
-// vector<BaseAction*> actionsLog; האם בסוף כל פעולה צריך להכניס לוקטור של ה 
-
 
 
 //base action
 BaseAction::BaseAction():errorMsg("<error_msg>"),status(ActionStatus::ERROR){}
 void BaseAction::complete(){
     status=ActionStatus::COMPLETED;
+    actionLog.push_back("COMPLETED");
 }//chage status to completed, if it was completed
 
 void BaseAction::error(string errorMsg){
     status=ActionStatus::ERROR;
     this->errorMsg=errorMsg;
+    actionLog.push_back("ERROR");
+
 }//change status to error, and print
 
 string BaseAction::getErrorMsg() const{
     return errorMsg;
 } //return the error message
-
-
-
 
 
 
@@ -39,7 +37,7 @@ void SimulateStep::act(WareHouse &wareHouse){
 			
 
 			if(wareHouse.getVolunteers()[j]->isBusy()){ //if the volunteer is busy
-				if(wareHouse.getVolunteers()[j]->getTimeLeft() != nullptr){ //if the volunteer is a collector
+				if(wareHouse.getVolunteers()[j]->.isCollector()){ //if the volunteer is a collector
 					wareHouse.getVolunteers()[j]->setTimeLeft(wareHouse.getVolunteers()[j]->getTimeLeft()-1); //decrease the time left by 1
 					if(wareHouse.getVolunteers()[j]->getTimeLeft() == 0){ //if the time left is 0
 						wareHouse.getVolunteers()[j]->setBusy(false); //set the volunteer to not busy
@@ -49,6 +47,7 @@ void SimulateStep::act(WareHouse &wareHouse){
 						wareHouse.getVolunteers()[j]->setNumOrdersLeft(nullptr); //set the number of orders left to nullptr
 					}
 				}
+            }
 				else { //if the volunteer is a driver
 					wareHouse.getVolunteers()[j]->setDistanceLeft(wareHouse.getVolunteers()[j]->getDistanceLeft()-1); //decrease the distance left by 1
 					if(wareHouse.getVolunteers()[j]->getDistanceLeft() == 0){ //if the distance left is 0
@@ -60,13 +59,10 @@ void SimulateStep::act(WareHouse &wareHouse){
 					}
 				}
 			}
-			else { //if the volunteer is not busy
-				if(wareHouse.getVolunteers()[j]->getOrder() != nullptr){ //if the volunteer has an order
-					if(wareHouse.getVolunteers()[j]->getOrder()->getStatus() == OrderStatus::PENDING){ //if the order is pending
-			}
-		}
-	}
-	
+        }
+}
+
+ 	
 SimulateStep *SimulateStep::clone() const{
 	return new SimulateStep(numOfSteps);
 }
@@ -86,20 +82,20 @@ AddOrder::AddOrder(int id) : customerId(id){} //constructor
 
 void AddOrder::act(WareHouse &wareHouse){
     if(wareHouse.getCustomer(customerId) == nullptr || &wareHouse.getCustomer(customerId) == NULL){
-        BaseAction::error("Customer does not exist");
+        BaseAction::error("Customer doesn't exist");
     }
     else if (wareHouse.getCustomer(customerId).addOrder(customerId)==-1)
-        BaseAction::error("Customer reached max orders");
-    Order* order = new Order(wareHouse.getOrderCounter(), customerId, (wareHouse.getCustomer(customerId)).getCustomerDistance());
-    order->setStatus(OrderStatus::PENDING);
-    wareHouse.getPendingOrders().push_back(order);
-    orderAdded=true;
+        BaseAction::error();
+    else {
+        Order* order = new Order(wareHouse.getOrderCounter(), customerId, (wareHouse.getCustomer(customerId)).getCustomerDistance());
+        order->setStatus(OrderStatus::PENDING);
+        wareHouse.getPendingOrders().push_back(order);
+        BaseAction::complete();
+    }
+    BaseAction::actionLog.push_back(toString());
 } //add order to warehouse, maybe error
 
 string AddOrder::toString() const{ 
- //   if(orderAdded)
-  //      return "the order of: " + customerId + "was added";
-   // return "the order of: " + customerId + "was not added";
    return "Order " + customerId + status;
 }
 
@@ -125,6 +121,7 @@ void AddCustomer::act(WareHouse &wareHouse){
      else {
             wareHouse.addCustomer(new SoldierCustomer (customerId,customerName, distance, maxOrders));
      }   
+     actionLog.push_back(toString());
 } //add customer to warehouse, never error
 
 AddCustomer *AddCustomer::clone() const{
@@ -133,7 +130,7 @@ AddCustomer *AddCustomer::clone() const{
         newCcus->customerId=customerId;
         return newCcus;
     }
-    AddCustomer* newCcus= new AddCustomer(customerName, "Soldier",  distance,  maxOrders);
+    AddCustomer* newScus= new AddCustomer(customerName, "Soldier",  distance,  maxOrders);
     newCcus->customerId=customerId;
     return newCcus;
 }
@@ -162,6 +159,8 @@ void PrintOrderStatus::act(WareHouse &wareHouse){
         << "Collector <" <<wareHouse.getOrder(orderId)->getCollectorId()<< ">\n" 
         << "Driver <" <<wareHouse.getOrder(orderId)->getDriverId()<< ">\n" ;
     }
+    baseAction::complete();
+    baseAction::actionLog.push_back(toString());
 } //print order status, maybe error 
 
 PrintOrderStatus *PrintOrderStatus::clone() const{
@@ -169,12 +168,9 @@ PrintOrderStatus *PrintOrderStatus::clone() const{
 }
 
 string PrintOrderStatus::toString() const{ //need to check
+    return "OrderStatus " + orderId + status;
 }   
  
-
-
-
-
 
 
 //PrintCustomerStatus
@@ -193,6 +189,8 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
             cout<<"\n num order left : "+wareHouse.(getCustomer(customerId))->getMaxOrders()-wareHouse.(getCustomer(customerId))->getNumOrders() +"\n";
         else cout<<"\n num order left : 0 ";
     } 
+    baseAction::complete();
+    baseAction::actionLog.push_back(toString());
 }//print customer status, maybe error
 
 PrintCustomerStatus *PrintCustomerStatus::clone() const {
@@ -200,7 +198,7 @@ PrintCustomerStatus *PrintCustomerStatus::clone() const {
 }
 
 string PrintCustomerStatus::toString() const{ //need to check
-	return "PrintCustomerStatus " + customerId + status;
+	return "CustomerStatus " + customerId + status;
 }
 
         
@@ -236,7 +234,9 @@ void PrintVolunteerStatus ::act(WareHouse &wareHouse){
 				cout << "ordersLeft:" << wareHouse.getVolunteer(VolunteerId)->getNumOrdersLeft() << endl;
 				// USING ORDERS LEFT AND NOT MAX ORDER AS WRITTEN IN THE PAPER
 		}
-	}	
+	}
+    baseAction::complete();
+    baseAction::actionLog.push_back(toString());	
 }
 
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const{
