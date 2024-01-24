@@ -123,9 +123,11 @@ void WareHouse::open(){
 int WareHouse::getCustomerCounter(){
     return customerCounter;
 }
+
 int WareHouse::getVolunteerCounter(){
     return volunteerCounter;
 }
+
 int WareHouse::getOrderCounter(){
     return orderCounter;
 }

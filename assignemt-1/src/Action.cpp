@@ -9,6 +9,7 @@ using std::vector;
 
 //base action
 BaseAction::BaseAction():errorMsg("<error_msg>"),status(ActionStatus::ERROR){}
+
 void BaseAction::complete(){
     status=ActionStatus::COMPLETED;
     actionLog.push_back("COMPLETED");
