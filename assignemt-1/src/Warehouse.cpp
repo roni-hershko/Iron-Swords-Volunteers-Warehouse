@@ -94,7 +94,7 @@ void WareHouse::printActionsLogs(){
         std::cout<<action->toString()<<std::endl; // Use std::cout instead of cout
 }
 
-Customer &WareHouse::getCustomer(int customerId) const{
+Customer &WareHouse::getCustomer(int customerId) const{ //מחפשת בתוך הרשימה?
     return *customers[customerId];
 }
 

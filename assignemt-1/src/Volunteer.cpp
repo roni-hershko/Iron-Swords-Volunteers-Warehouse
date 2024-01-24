@@ -36,35 +36,6 @@ CollectorVolunteer *CollectorVolunteer::clone() const {
 }
 
 
-//rule of 3 rulle of 5??????
-// Destructor
-CollectorVolunteer::~CollectorVolunteer() {}
-// copy constructor
-CollectorVolunteer ::CollectorVolunteer(const CollectorVolunteer &other) 
-	: Volunteer(other), coolDown(other.coolDown), timeLeft(other.timeLeft) {}
-// assignment operator
-CollectorVolunteer &CollectorVolunteer::operator=(const CollectorVolunteer &other){
-    if (this != &other){
-        Volunteer::operator=(other);
-        coolDown = other.coolDown;
-        timeLeft = other.timeLeft;
-    }
-    return *this;
-}
-// move constructor
-CollectorVolunteer::CollectorVolunteer(CollectorVolunteer &&other) noexcept 
-	: Volunteer(std::move(other)), coolDown(std::move(other.coolDown)), timeLeft(std::move(other.timeLeft)) {}
-// move assignment operator
-CollectorVolunteer &CollectorVolunteer::operator=(CollectorVolunteer &&other) noexcept{
-    if (this != &other){
-        Volunteer::operator=(std::move(other));
-        coolDown = std::move(other.coolDown);
-        timeLeft = std::move(other.timeLeft);
-    }
-    return *this;
-}
-
-
 void CollectorVolunteer::step(){
     if (timeLeft > 0){
         timeLeft--;
@@ -108,8 +79,12 @@ void CollectorVolunteer::acceptOrder(const Order &order){
     timeLeft = coolDown;
 }
 
+bool CollectorVolunteer::isCollector() const{
+    return true;
+}
+
 string CollectorVolunteer::toString() const{ //get ready for printVolunteerStatus function ???
-    return "Collector Volunteer: " + getName();
+    return "Collector Volunteer: " + getName() +" id " + std::to_string(getId());
 }
 
 
@@ -123,8 +98,6 @@ LimitedCollectorVolunteer::LimitedCollectorVolunteer(int id, const string &name,
 LimitedCollectorVolunteer *LimitedCollectorVolunteer::clone() const{
     return new LimitedCollectorVolunteer(*this);
 }
- //rule of 3 rulle of 5??????
-
 
 bool LimitedCollectorVolunteer::hasOrdersLeft() const{
     return ordersLeft > 0;
@@ -147,8 +120,8 @@ int LimitedCollectorVolunteer::getNumOrdersLeft() const{
     return ordersLeft;
 }
 
-string LimitedCollectorVolunteer::toString() const{ //get ready for printVolunteerStatus function ???
-    return "Limited Collector Volunteer: " + getName();
+string LimitedCollectorVolunteer::toString() const{ 
+    return "Limited Collector Volunteer: " + getName() +" id " + std::to_string(getId());
 }
 
 
@@ -163,7 +136,6 @@ DriverVolunteer *DriverVolunteer::clone() const{
     return new DriverVolunteer(*this);
 }
 
-//rulle of 3 rulle of 5??????
 int DriverVolunteer::getDistanceLeft() const{
     return distanceLeft;
 }
@@ -211,8 +183,12 @@ void DriverVolunteer::step(){
     }
 }
 
+bool DriverVolunteer::isCollector() const{
+    return false;
+}
+
 string DriverVolunteer::toString() const{ //get ready for printVolunteerStatus function ???
-    return "Driver Volunteer: " + getName();
+    return "Driver Volunteer: " + getName() +" id " + std::to_string(getId());
 }
 
 
@@ -248,6 +224,6 @@ void LimitedDriverVolunteer::acceptOrder(const Order &order){
     ordersLeft--;
 }
 
-string LimitedDriverVolunteer::toString() const{ //get ready for printVolunteerStatus function ???
-    return "Limited Driver Volunteer: " + getName();
+string LimitedDriverVolunteer::toString() const{ 
+    return "Limited Driver Volunteer: " + getName() +" id " + std::to_string(getId());
 }

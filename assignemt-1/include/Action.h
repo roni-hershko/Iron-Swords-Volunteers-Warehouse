@@ -50,7 +50,6 @@ class AddOrder : public BaseAction {
         void act(WareHouse &wareHouse) override;
         string toString() const override;
         AddOrder *clone() const override;
-        bool orderAdded=false; //new field for to string
     private:
         const int customerId;
 };
