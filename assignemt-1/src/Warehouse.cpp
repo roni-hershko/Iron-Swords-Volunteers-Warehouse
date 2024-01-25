@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <iostream> 
+#include <sstream>
 using namespace std;
 
 
@@ -60,15 +61,94 @@ WareHouse::WareHouse(const string &configFilePath)
 }
 
 void WareHouse::start(){
-	WareHouse::open();
-    cout << "Warehouse is open" << endl;
-    int numOfSteps;
-    while (isOpen)
-    {
-        cin >> numOfSteps;
-    }
-    
+	open();
+    cout << "Warehouse is open!" << endl;
+    getUserCommand();
 }
+
+void WareHouse::getUserCommand(){
+
+    string commend;
+    while(isOpen){
+        std::getline(std::cin, commend);
+        std::istringstream iss(commend);
+
+        std::vector<string> words;
+        string word;
+
+        while (iss >> word)
+        {
+            words.push_back(word);
+        }
+
+         if (words[0] == "customer" && words.size() >= 5)
+        {
+            string customerName = words[1];
+            string customerType = words[2];
+            int distance = std::stoi(words[3]);
+            int maxOrders = std::stoi(words[4]);
+
+            AddCustomer newCustomer(customerName, customerType, distance, maxOrders);
+            newCustomer.act(*this);
+        }
+        else if (words[0] == "order" && words.size() >= 2)
+        {
+            int customerId = std::stoi(words[1]);
+            AddOrder newOrder(customerId);
+            newOrder.act(*this);
+        }
+        else if (words[0] == "step" && words.size() >= 2)
+        {
+            int numOfStep = std::stoi(words[1]);
+            SimulateStep simStep(numOfStep);
+            simStep.act(*this);
+        }
+        else if (words[0] == "orderStatus" && words.size() >= 2)
+        {
+            int orderId = std::stoi(words[1]);
+            PrintOrderStatus orderStatus(orderId);
+            orderStatus.act(*this);
+        }
+        else if (words[0] == "customerStatus" && words.size() >= 2)
+        {
+            int customerId = std::stoi(words[1]);
+            PrintCustomerStatus customerStatus(customerId);
+            customerStatus.act(*this);
+        }
+        else if (words[0] == "volunteerStatus" && words.size() >= 2)
+        {
+            int volunteerId = std::stoi(words[1]);
+            PrintVolunteerStatus volunteerStatus(volunteerId);
+            volunteerStatus.act(*this);
+        }
+        else if (words[0] == "log")
+        {
+            PrintActionsLog log;
+            log.act(*this);
+        }
+        else if (words[0] == "close")
+        {
+            Close close;
+            close.act(*this);
+        }
+        else if (words[0] == "backup")
+        {
+            BackupWareHouse backup;
+            backup.act(*this);
+        }
+        else if (words[0] == "restore")
+        {
+            RestoreWareHouse restore;
+            restore.act(*this);
+        }
+        else
+        {
+            std::cout << "error: not a valid command" << std::endl;
+            ;
+        }
+
+    }
+ }
 
 void WareHouse::addOrder(Order* order){
     if(order->getStatus()==OrderStatus::COMPLETED){

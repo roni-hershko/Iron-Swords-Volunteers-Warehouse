@@ -71,7 +71,6 @@ class AddCustomer : public BaseAction {
 };
 
 
-
 class PrintOrderStatus : public BaseAction {
     public:
         PrintOrderStatus(int id);
@@ -81,6 +80,7 @@ class PrintOrderStatus : public BaseAction {
     private:
         const int orderId;
 };
+
 
 class PrintCustomerStatus: public BaseAction {
     public:

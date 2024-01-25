@@ -38,6 +38,7 @@ class WareHouse {
         WareHouse &operator=(const WareHouse &other);//copy assignment operator
         WareHouse&operator=(WareHouse &&other); //move assignment operator
         WareHouse(WareHouse &&other);////move constructor
+        void getUserCommand();  //new method that gets the user command
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
