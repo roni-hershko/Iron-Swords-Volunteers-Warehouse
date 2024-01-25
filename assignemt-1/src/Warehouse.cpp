@@ -4,8 +4,7 @@
 #include "../include/Customer.h"
 #include "../include/Volunteer.h"
 #include "../include/Order.h"
-#include "../include/Customer.h"
-#include "../include/BaseAction.h"
+#include "../include/Action.h"
 #include <string>
 #include <vector>
 #include <iostream> 
@@ -13,7 +12,7 @@ using namespace std;
 
 
 WareHouse::WareHouse(const string &configFilePath) 
-	: isOpen(true), actionsLog(), volunteers(), pendingOrders(), vol(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
+	: isOpen(true), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
 {
     ifstream configFile(configFilePath);
     string line;
@@ -60,21 +59,15 @@ WareHouse::WareHouse(const string &configFilePath)
     }
 }
 
-void WareHouse::start();{ 
-	string command;
-	cout << "Enter command: ";
-	cin >> command;
-
-	if (command == "start") {
-		configFile(configFilePath);
-		isOpen = true;
-		cout << "Warehouse is open!" << endl;
-	}
-
-	int numOfSteps;
-	cout << "Enter numOfSteps: ";
-	cin >> numOfSteps;
-	simulateStep::simulateStep(numOfSteps);
+void WareHouse::start(){
+	WareHouse::open();
+    cout << "Warehouse is open" << endl;
+    int numOfSteps;
+    while (isOpen)
+    {
+        cin >> numOfSteps;
+    }
+    
 }
 
 void WareHouse::addOrder(Order* order){
@@ -102,7 +95,12 @@ void WareHouse::addCustomer(Customer* customer){
 }; //new method that adds a customer to the warehouse
 
 Customer &WareHouse::getCustomer(int customerId) const{ 
-    return *customers[customerId];
+    for(auto customer:customers){
+        if(customer->getId()==customerId){
+            return *customer;
+        }
+    }
+    return nullptr;
 }
 
 Volunteer &WareHouse::getVolunteer(int volunteerId) const{
@@ -110,16 +108,32 @@ Volunteer &WareHouse::getVolunteer(int volunteerId) const{
 }
 
 Order &WareHouse::getOrder(int orderId) const{
-    if(*pendingOrders[orderId]!=NULL)
-        return *pendingOrders[orderId];
-    else if(*inProcessOrders[orderId]!=NULL)
-        return *inProcessOrders[orderId];
-    else return *completedOrders[orderId];
+    for(auto order:pendingOrders){
+        if(order->getId()==orderId){
+            return *order;
+        }
+    }
+    for(auto order:inProcessOrders){
+        if(order->getId()==orderId){
+            return *order;
+        }
+    }
+   for(auto order:completedOrders){
+        if(order->getId()==orderId){
+            return *order;
+        }
+    }
+    else return nullptr;
 }
 
 const vector<BaseAction*> &WareHouse::getActions() const{
     return actionsLog;
 }
+vector<Customer*> getCustomers(){
+	return customers;
+} 
+}
+vector<Volunteer*> getVolunteers(); //new method that returns the volunteers
 
 void WareHouse::close(){
     isOpen=false;
@@ -140,3 +154,148 @@ int WareHouse::getVolunteerCounter(){
 int WareHouse::getOrderCounter(){
     return orderCounter;
 }
+
+//Rule of 5
+ WareHouse::~WareHouse(){// need to do
+
+ }
+
+WareHouse::WareHouse(const WareHouse &other):isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){
+    for(auto action:other.actionsLog){
+        actionsLog.push_back(action->clone());
+    }
+    for(auto volunteer:other.volunteers){
+        volunteers.push_back(volunteer->clone());
+    }
+    for(auto pendingOrder:other.pendingOrders){
+        pendingOrders.push_back(pendingOrder->clone());
+    }
+    for(auto inProcessOrder:other.inProcessOrders){
+        inProcessOrders.push_back(inProcessOrder->clone());
+    }
+    for(auto completedOrder:other.completedOrders){
+        completedOrders.push_back(completedOrder->clone());
+    }
+    for(auto customer:other.customers){
+        customers.push_back(customer->clone());
+    }
+}
+
+WareHouse &WareHouse::operator=(const WareHouse &other){
+    if(this!=&other){
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+        //delet
+        actionsLog.clear();
+        volunteers.clear();
+        pendingOrders.clear();
+        inProcessOrders.clear();
+        completedOrders.clear();
+        customers.clear();
+        //copy
+        for(auto action:other.actionsLog){
+            actionsLog.push_back(action->clone());
+        }
+        for(auto volunteer:other.volunteers){
+            volunteers.push_back(volunteer->clone());
+        }
+        for(auto pendingOrder:other.pendingOrders){
+            pendingOrders.push_back(pendingOrder->clone());
+        }
+        for(auto inProcessOrder:other.inProcessOrders){
+            inProcessOrders.push_back(inProcessOrder->clone());
+        }
+        for(auto completedOrder:other.completedOrders){
+            completedOrders.push_back(completedOrder->clone());
+        }
+        for(auto customer:other.customers){
+            customers.push_back(customer->clone());
+        }
+    }
+    return *this;
+}
+
+WareHouse&WareHouse::operator=(WareHouse &&other){
+    if(this!=&other){
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+        //delet
+        actionsLog.clear();
+        volunteers.clear();
+        pendingOrders.clear();
+        inProcessOrders.clear();
+        completedOrders.clear();
+        customers.clear();
+        //copy
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+        for(auto action:other.actionsLog){
+            actionsLog.push_back(action->clone());
+        }
+        for(auto volunteer:other.volunteers){
+            volunteers.push_back(volunteer->clone());
+        }
+        for(auto pendingOrder:other.pendingOrders){
+            pendingOrders.push_back(pendingOrder->clone());
+        }
+        for(auto inProcessOrder:other.inProcessOrders){
+            inProcessOrders.push_back(inProcessOrder->clone());
+        }
+        for(auto completedOrder:other.completedOrders){
+            completedOrders.push_back(completedOrder->clone());
+        }
+        for(auto customer:other.customers){
+            customers.push_back(customer->clone());
+        }
+        //detete other
+        other.isOpen=false;
+        other.customerCounter=0;
+        other.volunteerCounter=0;
+        other.orderCounter=0;
+        other.actionsLog.clear();
+        other.volunteers.clear();
+        other.pendingOrders.clear();
+        other.inProcessOrders.clear();
+        other.completedOrders.clear();
+        other.customers.clear();
+    }
+    return *this;
+}
+
+WareHouse::WareHouse(WareHouse &&other):isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){
+    for(auto action:other.actionsLog){
+        actionsLog.push_back(action->clone());
+    }
+    for(auto volunteer:other.volunteers){
+        volunteers.push_back(volunteer->clone());
+    }
+    for(auto pendingOrder:other.pendingOrders){
+        pendingOrders.push_back(pendingOrder->clone());
+    }
+    for(auto inProcessOrder:other.inProcessOrders){
+        inProcessOrders.push_back(inProcessOrder->clone());
+    }
+    for(auto completedOrder:other.completedOrders){
+        completedOrders.push_back(completedOrder->clone());
+    }
+    for(auto customer:other.customers){
+        customers.push_back(customer->clone());
+    }
+    //detete other
+    other.isOpen=false;
+    other.customerCounter=0;
+    other.volunteerCounter=0;
+    other.orderCounter=0;
+    other.actionsLog.clear();
+    other.volunteers.clear();
+    other.pendingOrders.clear();
+    other.inProcessOrders.clear();
+    other.completedOrders.clear();
+    other.customers.clear();
+}////move constructor

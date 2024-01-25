@@ -38,6 +38,7 @@ class SimulateStep : public BaseAction {
     public:
         SimulateStep(int numOfSteps);
         void act(WareHouse &wareHouse) override;
+		void assignVolunteer();
         std::string toString() const override;
         SimulateStep *clone() const override;
 

@@ -1,8 +1,8 @@
 #include "../include/Action.h"
 #include <string>
 #include <vector>
-#include <WareHouse.h>
-#include <Order.h>
+#include "../include/WareHouse.h"
+#include "../include/Order.h"
 using std::string;
 using std::vector;
 
@@ -12,15 +12,12 @@ BaseAction::BaseAction():errorMsg("<error_msg>"),status(ActionStatus::ERROR){}
 
 void BaseAction::complete(){
     status=ActionStatus::COMPLETED;
-    actionLog.push_back("COMPLETED");
-}
+}//chage status to completed, if it was completed
 
 void BaseAction::error(string errorMsg){
     status=ActionStatus::ERROR;
     this->errorMsg=errorMsg;
-    actionLog.push_back("ERROR");
-
-}
+}//change status to error, and print
 
 string BaseAction::getErrorMsg() const{
     return errorMsg;
@@ -85,7 +82,7 @@ void AddOrder::act(WareHouse &wareHouse){
         wareHouse.getPendingOrders().push_back(order);
         BaseAction::complete();
     }
-    BaseAction::actionLog.push_back(toString());
+    wareHouse.actionLog.addAction(this);
 } //add order to warehouse, maybe error
 
 string AddOrder::toString() const{ 
@@ -109,7 +106,7 @@ void AddCustomer::act(WareHouse &wareHouse){
      else {
             wareHouse.addCustomer(new SoldierCustomer (customerId,customerName, distance, maxOrders));
      }   
-     actionLog.push_back(toString());
+    wareHouse.actionLog.addAction(this);
 } //add customer to warehouse, never error
 
 AddCustomer *AddCustomer::clone() const{
@@ -145,7 +142,7 @@ void PrintOrderStatus::act(WareHouse &wareHouse){
         << "Driver <" <<wareHouse.getOrder(orderId)->getDriverId()<< ">\n" ;
     }
     baseAction::complete();
-    baseAction::actionLog.push_back(toString());
+    wareHouse.actionLog.addAction(this);
 } //print order status, maybe error 
 
 PrintOrderStatus *PrintOrderStatus::clone() const{
@@ -176,7 +173,8 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
         else cout<<"\n num order left : 0 ";
         baseAction::complete();
     } 
-    baseAction::actionLog.push_back(toString());
+    wareHouse.actionLog.addAction(this);
+
 }
 
 PrintCustomerStatus *PrintCustomerStatus::clone() const {
@@ -219,7 +217,7 @@ void PrintVolunteerStatus ::act(WareHouse &wareHouse){
 		}
 		baseAction::complete();
 	}
-    baseAction::actionLog.push_back(toString());	
+    wareHouse.actionLog.addAction(this);
 }
 
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const{
@@ -236,9 +234,9 @@ PrintActionsLog::PrintActionsLog(){}//constructor
 
 void PrintActionsLog::act(WareHouse &wareHouse){
 	for(int i=0; i<wareHouse.getActions().size(); i++)
-		cout<< wareHouse.getActions()[i]"\n"; 
+		cout<< wareHouse.getActions()[i].toString()"\n"; 
 	baseAction::complete();
-	baseAction::actionLog.push_back(toString());		
+    wareHouse.actionLog.addAction(this);
 } 
 
 PrintActionsLog *PrintActionsLog::clone() const{
