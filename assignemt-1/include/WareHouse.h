@@ -30,9 +30,11 @@ class WareHouse {
         int getVolunteerCounter();
         int getOrderCounter();//new metod that returns the order counter
         // maybe not needed
-        vector<Order*> getPendingOrders(); //new method that returns the pending orders
-        vector<Order*> getCompletedOrders(); //new method that returns the completed orders
-        vector<Order*> getinProcessOrders(); //new method that returns the orders that are been worked by volunteers
+        vector<Order*> &getPendingOrders(); //new method that returns the pending orders
+        vector<Order*> &getCompletedOrders(); //new method that returns the completed orders
+        vector<Order*> &getinProcessOrders(); //new method that returns the orders that are been worked by volunteers
+        vector<Customer*> &getCustomers(); //new method that returns the customers
+        vector<Volunteer*> &getVolunteers(); //new method that returns the volunteers
         ~WareHouse();//destructor
         WareHouse(const WareHouse &other);//copy constructor
         WareHouse &operator=(const WareHouse &other);//copy assignment operator
