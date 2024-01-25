@@ -32,15 +32,15 @@ void SimulateStep::act(WareHouse &wareHouse){
 		for(int j=0; j<wareHouse.getVolunteers().size(); j++){ //לעבור על הלקוחות ההזמנות המתנדבים?
 			
 
-			if(wareHouse.getVolunteers()[j]->isBusy()){ //if the volunteer is busy
-				if(wareHouse.getVolunteers()[j]->.isCollector()){ //if the volunteer is a collector
-					wareHouse.getVolunteers()[j]->setTimeLeft(wareHouse.getVolunteers()[j]->getTimeLeft()-1); //decrease the time left by 1
-					if(wareHouse.getVolunteers()[j]->getTimeLeft() == 0){ //if the time left is 0
-						wareHouse.getVolunteers()[j]->setBusy(false); //set the volunteer to not busy
-						wareHouse.getVolunteers()[j]->setTimeLeft(nullptr); //set the time left to nullptr
-						wareHouse.getVolunteers()[j]->setOrder(nullptr); //set the order to nullptr
-						wareHouse.getVolunteers()[j]->setDistanceLeft(nullptr); //set the distance left to nullptr
-						wareHouse.getVolunteers()[j]->setNumOrdersLeft(nullptr); //set the number of orders left to nullptr
+			if(wareHouse.getVolunteers()[j].isBusy()){ //if the volunteer is busy
+				if(wareHouse.getVolunteers()[j].isCollector()){ //if the volunteer is a collector
+					wareHouse.getVolunteers()[j].setTimeLeft(wareHouse.getVolunteers()[j]->getTimeLeft()-1); //decrease the time left by 1
+					if(wareHouse.getVolunteers()[j].getTimeLeft() == 0){ //if the time left is 0
+						wareHouse.getVolunteers()[j].setBusy(false); //set the volunteer to not busy
+						wareHouse.getVolunteers()[j].setTimeLeft(nullptr); //set the time left to nullptr
+						wareHouse.getVolunteers()[j].setOrder(nullptr); //set the order to nullptr
+						wareHouse.getVolunteers()[j].setDistanceLeft(nullptr); //set the distance left to nullptr
+						wareHouse.getVolunteers()[j].setNumOrdersLeft(nullptr); //set the number of orders left to nullptr
 					}
 				}
             }
@@ -137,9 +137,9 @@ void PrintOrderStatus::act(WareHouse &wareHouse){
     else{
         cout<< "OrderId <" <<orderId<< ">\n" 
         << "OrderStatus <" <<OrderStatus(wareHouse.getOrder(orderId).getStatus())<< ">\n" 
-        << "CustomerId <" <<wareHouse.getOrder(orderId)->getCustomer()->getId()<< ">\n" 
-        << "Collector <" <<wareHouse.getOrder(orderId)->getCollectorId()<< ">\n" 
-        << "Driver <" <<wareHouse.getOrder(orderId)->getDriverId()<< ">\n" ;
+        << "CustomerId <" <<wareHouse.getOrder(orderId).getCustomer().getId()<< ">\n" 
+        << "Collector <" <<wareHouse.getOrder(orderId).getCollectorId()<< ">\n" 
+        << "Driver <" <<wareHouse.getOrder(orderId).getDriverId()<< ">\n" ;
     }
     baseAction::complete();
     wareHouse.actionLog.addAction(this);
@@ -169,7 +169,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
              cout<<"orderId :" + (*orderList[i]).getId() +"\n orderStatus : "+ OrderStatus((*orderList[i]).getStatus());
         }
         if(wareHouse.getCustomer(customerId).canMakeOrder())
-            cout<<"\n num order left : "+wareHouse.(getCustomer(customerId))->getMaxOrders()-wareHouse.(getCustomer(customerId))->getNumOrders() +"\n";
+            cout<<"\n num order left : "+wareHouse.((getCustomer(customerId)).getMaxOrders())-(wareHouse.(getCustomer(customerId)).getNumOrders()) +"\n";
         else cout<<"\n num order left : 0 ";
         baseAction::complete();
     } 
@@ -203,17 +203,17 @@ void PrintVolunteerStatus ::act(WareHouse &wareHouse){
 			cout << "timeLeft: None" << endl; 
 			cout << "ordersLeft: None" << endl; 
 		}
-		else if (wareHouse.getVolunteer(VolunteerId)->isCollector()){ //if the volunteer is a collector
-			cout << "OrderID:" wareHouse.getVolunteer(VolunteerId)->getOrder()->getId()<< endl;
-			cout << "timeLeft:" << wareHouse.getVolunteer(VolunteerId)->getTimeLeft() << endl; 
-			if(wareHouse.getVolunteer(VolunteerId)->getDistanceLeft() != nullptr)
-				cout << "ordersLeft:" << wareHouse.getVolunteer(VolunteerId)->getDistanceLeft() << endl;
+		else if (wareHouse.getVolunteer(VolunteerId).isCollector()){ //if the volunteer is a collector
+			cout << "OrderID:" wareHouse.getVolunteer(VolunteerId).getOrder().getId()<< endl;
+			cout << "timeLeft:" << wareHouse.getVolunteer(VolunteerId).getTimeLeft() << endl; 
+			if(wareHouse.getVolunteer(VolunteerId).getDistanceLeft() != nullptr)
+				cout << "ordersLeft:" << wareHouse.getVolunteer(VolunteerId).getDistanceLeft() << endl;
 		}
 		else { //if the volunteer is a driver
-			cout << "OrderID:" wareHouse.getVolunteer(VolunteerId)->getOrder()->getId()<< endl;
-			cout << "distanceLeft:" << wareHouse.getVolunteer(VolunteerId)->getDistanceLeft() << endl; 
-			if (wareHouse.getVolunteer(VolunteerId)->getNumOrdersLeft() != nullptr)
-				cout << "ordersLeft:" << wareHouse.getVolunteer(VolunteerId)->getNumOrdersLeft() << endl;
+			cout << "OrderID:" wareHouse.getVolunteer(VolunteerId).getOrder().getId()<< endl;
+			cout << "distanceLeft:" << wareHouse.getVolunteer(VolunteerId).getDistanceLeft() << endl; 
+			if (wareHouse.getVolunteer(VolunteerId).getNumOrdersLeft() != nullptr)
+				cout << "ordersLeft:" << wareHouse.getVolunteer(VolunteerId).getNumOrdersLeft() << endl;
 		}
 		baseAction::complete();
 	}
