@@ -24,9 +24,6 @@ bool Volunteer::isBusy() const{
 
 
 
-
-
-
 //CollectorVolunteer
 CollectorVolunteer::CollectorVolunteer(int id, const string &name, int coolDown) 
 	: Volunteer(id, name), coolDown(coolDown), timeLeft(0) {}
@@ -34,7 +31,6 @@ CollectorVolunteer::CollectorVolunteer(int id, const string &name, int coolDown)
 CollectorVolunteer *CollectorVolunteer::clone() const {
 	return new CollectorVolunteer(*this);
 }
-
 
 void CollectorVolunteer::step(){
     if (timeLeft > 0){
@@ -89,8 +85,6 @@ string CollectorVolunteer::toString() const{ //get ready for printVolunteerStatu
 
 
 
-
-
 //LimitedCollectorVolunteer
 LimitedCollectorVolunteer::LimitedCollectorVolunteer(int id, const string &name, int coolDown, int maxOrders)
     : CollectorVolunteer(id, name, coolDown), maxOrders(maxOrders), ordersLeft(maxOrders) {}
@@ -123,8 +117,6 @@ int LimitedCollectorVolunteer::getNumOrdersLeft() const{
 string LimitedCollectorVolunteer::toString() const{ 
     return "Limited Collector Volunteer: " + getName() +" id " + std::to_string(getId());
 }
-
-
 
 
 
@@ -190,8 +182,6 @@ bool DriverVolunteer::isCollector() const{
 string DriverVolunteer::toString() const{ //get ready for printVolunteerStatus function ???
     return "Driver Volunteer: " + getName() +" id " + std::to_string(getId());
 }
-
-
 
 
 

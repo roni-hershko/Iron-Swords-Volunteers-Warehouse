@@ -12,7 +12,8 @@
 using namespace std;
 
 
-WareHouse::WareHouse(const string &configFilePath) : isOpen(true), actionsLog(), volunteers(), pendingOrders(), vol(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
+WareHouse::WareHouse(const string &configFilePath) 
+	: isOpen(true), actionsLog(), volunteers(), pendingOrders(), vol(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
 {
     ifstream configFile(configFilePath);
     string line;
@@ -59,7 +60,9 @@ WareHouse::WareHouse(const string &configFilePath) : isOpen(true), actionsLog(),
     }
 }
 
-void WareHouse::start();
+void WareHouse::start();{
+	WareHouse.open();
+}
 
 void WareHouse::addOrder(Order* order){
     if(order->getStatus()==OrderStatus::COMPLETED){
@@ -73,7 +76,7 @@ void WareHouse::addOrder(Order* order){
 
 void WareHouse::addAction(BaseAction* action){
     actionsLog.push_back(action);
-} //add action to warehouse
+} 
 
 void WareHouse::addVolunteer(Volunteer* volunteer){
     volunteers.push_back(volunteer);
@@ -132,9 +135,11 @@ void WareHouse::open(){
 int WareHouse::getCustomerCounter(){
     return customerCounter;
 }
+
 int WareHouse::getVolunteerCounter(){
     return volunteerCounter;
 }
+
 int WareHouse::getOrderCounter(){
     return orderCounter;
 }
