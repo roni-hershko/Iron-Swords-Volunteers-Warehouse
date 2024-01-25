@@ -85,8 +85,13 @@ void WareHouse::addCustomer(Customer* customer){
     customerCounter++;
 }; //new method that adds a customer to the warehouse
 
-Customer &WareHouse::getCustomer(int customerId) const{ //מחפשת בתוך הרשימה?
-    return *customers[customerId];
+Customer &WareHouse::getCustomer(int customerId) const{ //fixed
+    for(auto customer:customers){
+        if(customer->getId()==customerId){
+            return *customer;
+        }
+    }
+    return nullptr;
 }
 
 Volunteer &WareHouse::getVolunteer(int volunteerId) const{
@@ -94,11 +99,22 @@ Volunteer &WareHouse::getVolunteer(int volunteerId) const{
 }
 
 Order &WareHouse::getOrder(int orderId) const{
-    if(*pendingOrders[orderId]!=NULL)
-        return *pendingOrders[orderId];
-    else if(*vol[orderId]!=NULL)
-        return *vol[orderId];
-    else return *completedOrders[orderId];
+    for(auto order:pendingOrders){
+        if(order->getId()==orderId){
+            return *order;
+        }
+    }
+    for(auto order:inProcessOrders){
+        if(order->getId()==orderId){
+            return *order;
+        }
+    }
+   for(auto order:completedOrders){
+        if(order->getId()==orderId){
+            return *order;
+        }
+    }
+    else return nullptr;
 }
 
 const vector<BaseAction*> &WareHouse::getActions() const{
@@ -107,10 +123,6 @@ const vector<BaseAction*> &WareHouse::getActions() const{
 
 void WareHouse::close(){// make sure no memory leaks, that method ends the program
     isOpen=false;
-for(auto penOr:pendingOrders)
-        std::cout<<penOr->toString()<<std::endl; 
-for(auto comOr:completedOrders)
-        std::cout<<comOr->toString()<<std::endl;
 }
 
 void WareHouse::open(){
@@ -126,3 +138,148 @@ int WareHouse::getVolunteerCounter(){
 int WareHouse::getOrderCounter(){
     return orderCounter;
 }
+
+//Rule of 5
+ WareHouse::~WareHouse(){
+       Action::close::act(this);
+ }
+
+WareHouse::WareHouse(const WareHouse &other):isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){
+    for(auto action:other.actionsLog){
+        actionsLog.push_back(action->clone());
+    }
+    for(auto volunteer:other.volunteers){
+        volunteers.push_back(volunteer->clone());
+    }
+    for(auto pendingOrder:other.pendingOrders){
+        pendingOrders.push_back(pendingOrder->clone());
+    }
+    for(auto inProcessOrder:other.inProcessOrders){
+        inProcessOrders.push_back(inProcessOrder->clone());
+    }
+    for(auto completedOrder:other.completedOrders){
+        completedOrders.push_back(completedOrder->clone());
+    }
+    for(auto customer:other.customers){
+        customers.push_back(customer->clone());
+    }
+}
+
+WareHouse &WareHouse::operator=(const WareHouse &other){
+    if(this!=&other){
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+        //delet
+        actionsLog.clear();
+        volunteers.clear();
+        pendingOrders.clear();
+        inProcessOrders.clear();
+        completedOrders.clear();
+        customers.clear();
+        //copy
+        for(auto action:other.actionsLog){
+            actionsLog.push_back(action->clone());
+        }
+        for(auto volunteer:other.volunteers){
+            volunteers.push_back(volunteer->clone());
+        }
+        for(auto pendingOrder:other.pendingOrders){
+            pendingOrders.push_back(pendingOrder->clone());
+        }
+        for(auto inProcessOrder:other.inProcessOrders){
+            inProcessOrders.push_back(inProcessOrder->clone());
+        }
+        for(auto completedOrder:other.completedOrders){
+            completedOrders.push_back(completedOrder->clone());
+        }
+        for(auto customer:other.customers){
+            customers.push_back(customer->clone());
+        }
+    }
+    return *this;
+}
+
+WareHouse&WareHouse::operator=(WareHouse &&other){
+    if(this!=&other){
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+        //delet
+        actionsLog.clear();
+        volunteers.clear();
+        pendingOrders.clear();
+        inProcessOrders.clear();
+        completedOrders.clear();
+        customers.clear();
+        //copy
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+        for(auto action:other.actionsLog){
+            actionsLog.push_back(action->clone());
+        }
+        for(auto volunteer:other.volunteers){
+            volunteers.push_back(volunteer->clone());
+        }
+        for(auto pendingOrder:other.pendingOrders){
+            pendingOrders.push_back(pendingOrder->clone());
+        }
+        for(auto inProcessOrder:other.inProcessOrders){
+            inProcessOrders.push_back(inProcessOrder->clone());
+        }
+        for(auto completedOrder:other.completedOrders){
+            completedOrders.push_back(completedOrder->clone());
+        }
+        for(auto customer:other.customers){
+            customers.push_back(customer->clone());
+        }
+        //detete other
+        other.isOpen=false;
+        other.customerCounter=0;
+        other.volunteerCounter=0;
+        other.orderCounter=0;
+        other.actionsLog.clear();
+        other.volunteers.clear();
+        other.pendingOrders.clear();
+        other.inProcessOrders.clear();
+        other.completedOrders.clear();
+        other.customers.clear();
+    }
+    return *this;
+}
+
+WareHouse::WareHouse(WareHouse &&other):isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){
+    for(auto action:other.actionsLog){
+        actionsLog.push_back(action->clone());
+    }
+    for(auto volunteer:other.volunteers){
+        volunteers.push_back(volunteer->clone());
+    }
+    for(auto pendingOrder:other.pendingOrders){
+        pendingOrders.push_back(pendingOrder->clone());
+    }
+    for(auto inProcessOrder:other.inProcessOrders){
+        inProcessOrders.push_back(inProcessOrder->clone());
+    }
+    for(auto completedOrder:other.completedOrders){
+        completedOrders.push_back(completedOrder->clone());
+    }
+    for(auto customer:other.customers){
+        customers.push_back(customer->clone());
+    }
+    //detete other
+    other.isOpen=false;
+    other.customerCounter=0;
+    other.volunteerCounter=0;
+    other.orderCounter=0;
+    other.actionsLog.clear();
+    other.volunteers.clear();
+    other.pendingOrders.clear();
+    other.inProcessOrders.clear();
+    other.completedOrders.clear();
+    other.customers.clear();
+}////move constructor

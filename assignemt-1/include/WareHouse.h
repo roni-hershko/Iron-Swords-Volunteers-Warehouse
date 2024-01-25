@@ -33,7 +33,11 @@ class WareHouse {
         vector<Order*> getPendingOrders(); //new method that returns the pending orders
         vector<Order*> getCompletedOrders(); //new method that returns the completed orders
         vector<Order*> getinProcessOrders(); //new method that returns the orders that are been worked by volunteers
-
+        ~WareHouse();//destructor
+        WareHouse(const WareHouse &other);//copy constructor
+        WareHouse &operator=(const WareHouse &other);//copy assignment operator
+        WareHouse&operator=(WareHouse &&other); //move assignment operator
+        WareHouse(WareHouse &&other);////move constructor
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
