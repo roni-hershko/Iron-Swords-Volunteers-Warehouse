@@ -4,8 +4,7 @@
 #include "../include/Customer.h"
 #include "../include/Volunteer.h"
 #include "../include/Order.h"
-#include "../include/Customer.h"
-#include "../include/BaseAction.h"
+#include "../include/Action.h"
 #include <string>
 #include <vector>
 #include <iostream> 
@@ -13,7 +12,7 @@ using namespace std;
 
 
 WareHouse::WareHouse(const string &configFilePath) 
-	: isOpen(true), actionsLog(), volunteers(), pendingOrders(), vol(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
+	: isOpen(true), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
 {
     ifstream configFile(configFilePath);
     string line;
@@ -60,8 +59,15 @@ WareHouse::WareHouse(const string &configFilePath)
     }
 }
 
-void WareHouse::start();{
-	WareHouse.open();
+void WareHouse::start(){
+	WareHouse::open();
+    cout << "Warehouse is open" << endl;
+    int numOfSteps;
+    while (isOpen)
+    {
+        cin >> numOfSteps;
+    }
+    
 }
 
 void WareHouse::addOrder(Order* order){
@@ -88,7 +94,7 @@ void WareHouse::addCustomer(Customer* customer){
     customerCounter++;
 }; //new method that adds a customer to the warehouse
 
-Customer &WareHouse::getCustomer(int customerId) const{ //fixed
+Customer &WareHouse::getCustomer(int customerId) const{ 
     for(auto customer:customers){
         if(customer->getId()==customerId){
             return *customer;
@@ -124,7 +130,9 @@ const vector<BaseAction*> &WareHouse::getActions() const{
     return actionsLog;
 }
 
-void WareHouse::close(){// make sure no memory leaks, that method ends the program
+}
+
+void WareHouse::close(){
     isOpen=false;
 }
 
@@ -145,8 +153,8 @@ int WareHouse::getOrderCounter(){
 }
 
 //Rule of 5
- WareHouse::~WareHouse(){
-       Action::close::act(this);
+ WareHouse::~WareHouse(){// need to do
+
  }
 
 WareHouse::WareHouse(const WareHouse &other):isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){
