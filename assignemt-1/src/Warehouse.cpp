@@ -60,8 +60,21 @@ WareHouse::WareHouse(const string &configFilePath)
     }
 }
 
-void WareHouse::start();{
-	WareHouse.open();
+void WareHouse::start();{ 
+	string command;
+	cout << "Enter command: ";
+	cin >> command;
+
+	if (command == "start") {
+		configFile(configFilePath);
+		isOpen = true;
+		cout << "Warehouse is open!" << endl;
+	}
+
+	int numOfSteps;
+	cout << "Enter numOfSteps: ";
+	cin >> numOfSteps;
+	simulateStep::simulateStep(numOfSteps);
 }
 
 void WareHouse::addOrder(Order* order){
@@ -99,8 +112,8 @@ Volunteer &WareHouse::getVolunteer(int volunteerId) const{
 Order &WareHouse::getOrder(int orderId) const{
     if(*pendingOrders[orderId]!=NULL)
         return *pendingOrders[orderId];
-    else if(*vol[orderId]!=NULL)
-        return *vol[orderId];
+    else if(*inProcessOrders[orderId]!=NULL)
+        return *inProcessOrders[orderId];
     else return *completedOrders[orderId];
 }
 
@@ -108,12 +121,8 @@ const vector<BaseAction*> &WareHouse::getActions() const{
     return actionsLog;
 }
 
-void WareHouse::close(){// make sure no memory leaks, that method ends the program
+void WareHouse::close(){
     isOpen=false;
-for(auto penOr:pendingOrders)
-        std::cout<<penOr->toString()<<std::endl; 
-for(auto comOr:completedOrders)
-        std::cout<<comOr->toString()<<std::endl;
 }
 
 void WareHouse::open(){
