@@ -14,7 +14,6 @@ enum class CustomerType{
     Soldier, Civilian
 };
 
-
 class BaseAction{
     public:
         BaseAction();
@@ -38,7 +37,8 @@ class SimulateStep : public BaseAction {
     public:
         SimulateStep(int numOfSteps);
         void act(WareHouse &wareHouse) override;
-		void assignVolunteer();
+		void assignVolunteer(WareHouse &wareHouse);
+		void makeTheStep(WareHouse &wareHouse);
         std::string toString() const override;
         SimulateStep *clone() const override;
 
@@ -56,7 +56,6 @@ class AddOrder : public BaseAction {
         const int customerId;
 };
 
-
 class AddCustomer : public BaseAction {
     public:
         AddCustomer(const string &customerName, const string &customerType, int distance, int maxOrders);
@@ -70,7 +69,6 @@ class AddCustomer : public BaseAction {
         const int maxOrders;
 };
 
-
 class PrintOrderStatus : public BaseAction {
     public:
         PrintOrderStatus(int id);
@@ -80,7 +78,6 @@ class PrintOrderStatus : public BaseAction {
     private:
         const int orderId;
 };
-
 
 class PrintCustomerStatus: public BaseAction {
     public:
@@ -92,7 +89,6 @@ class PrintCustomerStatus: public BaseAction {
         const int customerId;
 };
 
-
 class PrintVolunteerStatus : public BaseAction {
     public:
         PrintVolunteerStatus(int id);
@@ -102,7 +98,6 @@ class PrintVolunteerStatus : public BaseAction {
     private:
         const int volunteerId;
 };
-
 
 class PrintActionsLog : public BaseAction {
     public:
@@ -130,7 +125,6 @@ class BackupWareHouse : public BaseAction {
         string toString() const override;
     private:
 };
-
 
 class RestoreWareHouse : public BaseAction {
     public:

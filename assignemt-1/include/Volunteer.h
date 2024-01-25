@@ -12,14 +12,15 @@ class Volunteer {
         Volunteer(int id, const string &name);
         int getId() const;
         const string &getName() const;
-        int getActiveOrderId() const;
-        int getCompletedOrderId() const;
+        int getActiveOrderId() const; 
+        int getCompletedOrderId() const; 
         bool isBusy() const; // Signal whether the volunteer is currently processing an order    
         virtual bool hasOrdersLeft() const = 0; // Signal whether the volunteer didn't reach orders limit,Always true for CollectorVolunteer and DriverVolunteer
         virtual bool canTakeOrder(const Order &order) const = 0; // Signal if the volunteer can take the order.      
         virtual void acceptOrder(const Order &order) = 0; // Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
-        virtual bool isCollector () const= 0;// Signal whether the volunteer is a CollectorVolunteer    
-        virtual void step() = 0; //Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
+        virtual bool isCollector () const= 0;// NEW Signal whether the volunteer is a CollectorVolunteer    
+        
+		virtual void step() = 0; //Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
 
         virtual string toString() const = 0;
         virtual Volunteer* clone() const = 0; //Return a copy of the volunteer
@@ -47,7 +48,7 @@ class CollectorVolunteer: public Volunteer {
         bool hasOrdersLeft() const override;
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
-        bool isCollector () const override;
+        bool isCollector () const override; //new
         string toString() const override;
     
     private:
