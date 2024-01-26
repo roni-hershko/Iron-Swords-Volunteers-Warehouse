@@ -48,6 +48,7 @@ void SimulateStep::assignVolunteer(WareHouse &wareHouse){
 void SimulateStep::makeTheStep(WareHouse &wareHouse){  
 
 }
+
 SimulateStep *SimulateStep::clone() const{
 	return new SimulateStep(numOfSteps);
 }
