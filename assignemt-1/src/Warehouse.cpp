@@ -232,9 +232,20 @@ int WareHouse::getOrderCounter(){
     return orderCounter;
 }
 
-//Rule of 5
- WareHouse::~WareHouse(){// need to do
+void WareHouse::deleteAll(){
+    actionLog.clear();
+    vollenuteers.clear();
+    pendingOrders.clear();
+    inProcessOrders.clear();
+    completedOrders.clear();
+    customers.clear();
+    isOpen=false;
+}
 
+
+//Rule of 5
+ WareHouse::~WareHouse(){
+    deleteAll();
  }
 
 WareHouse::WareHouse(const WareHouse &other):isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){

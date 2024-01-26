@@ -261,18 +261,7 @@ void close::act(warehouse &wareHouse){
 	for(int i=0; i<wareHouse.getinProcessOrders().size(); i++){
 		cout<< "order" wareHouse.getinProcessOrders()[i].getOrderCounter() + " " + wareHouse.getinProcessOrders()[i]->getId() + " " + wareHouse.getinProcessOrders()[i]->getCustomerId() + " " + wareHouse.getinProcessOrders()[i]->getStatus() + "\n";
 	}
-	
-	//free all memory
-	//for(int i=0; i<wareHouse.volunteers().size(); i++){
-		//delete wareHouse.Volunteers()[i];
-	//}
-    wareHouse.Volunteers.clear();
-    wareHouse.PendingOrders().clear();
-    wareHouse.CompletedOrders().clear();
-    wareHouse.inProcessOrders().clear();
-    wareHouse.Customers().clear();
-    wareHouse.ActionsLog().clear();
-	isOpen=false;
+    wareHouse.~WareHouse();
 }
 
 close *close::clone() const{

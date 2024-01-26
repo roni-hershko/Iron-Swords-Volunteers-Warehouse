@@ -41,6 +41,7 @@ class WareHouse {
         WareHouse&operator=(WareHouse &&other); //move assignment operator
         WareHouse(WareHouse &&other);////move constructor
         void getUserCommand();  //new method that gets the user command
+        void deleteAll(); //new method that deletes all the objects in the warehouse
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
