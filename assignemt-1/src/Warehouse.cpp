@@ -60,7 +60,7 @@ WareHouse::WareHouse(const string &configFilePath)
     }
 }
 
-void WareHouse::start(){
+void WareHouse::start(){ //add invalid command
 	open();
     cout << "Warehouse is open!" << endl;
     getUserCommand();
@@ -150,14 +150,16 @@ void WareHouse::getUserCommand(){
     }
  }
 
-void WareHouse::addOrder(Order* order){
-    if(order->getStatus()==OrderStatus::COMPLETED){
-        completedOrders.push_back(order);
-    }
-    else if (order->getStatus()==OrderStatus::PENDING){
-         pendingOrders.push_back(order);
-    }
-    else inProcessOrders.push_back(order);
+void WareHouse::addOrder(Order* order){ //roni change this method
+	pendingOrders.push_back(order);
+	orderCounter++;
+   // if(order->getStatus()==OrderStatus::COMPLETED){
+       // completedOrders.push_back(order);
+   // }
+   // else if (order->getStatus()==OrderStatus::PENDING){
+       //  pendingOrders.push_back(order);
+   // }
+   // else inProcessOrders.push_back(order);
 }
 
 void WareHouse::addAction(BaseAction* action){
@@ -210,6 +212,24 @@ const vector<BaseAction*> &WareHouse::getActions() const{
     return actionsLog;
 }
 
+vector<Order*> &WareHouse::getPendingOrders(){
+	return pendingOrders;
+}
+
+vector<Order*> &WareHouse::getCompletedOrders(){
+	return completedOrders;
+}
+
+vector<Order*> &WareHouse::getinProcessOrders(){
+	return inProcessOrders;
+}
+
+vector<Customer*> &WareHouse::getCustomers(){
+	return customers;
+}
+
+vector<Volunteer*> &WareHouse::getVolunteers(){
+	return volunteers;
 }
 
 void WareHouse::close(){

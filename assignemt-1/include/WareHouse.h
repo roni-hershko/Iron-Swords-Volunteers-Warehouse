@@ -26,16 +26,20 @@ class WareHouse {
         const vector<BaseAction*> &getActions() const;
         void close();
         void open();
-        int getCustomerCounter();
+        
+		//new methods
+		void getUserCommand(); //assist start() method
+		int getCustomerCounter();
         int getVolunteerCounter();
-        int getOrderCounter();//new metod that returns the order counter
-        // maybe not needed
-        vector<Order*> &getPendingOrders(); //new method that returns the pending orders
-        vector<Order*> &getCompletedOrders(); //new method that returns the completed orders
-        vector<Order*> &getinProcessOrders(); //new method that returns the orders that are been worked by volunteers
-        vector<Customer*> &getCustomers(); //new method that returns the customers
-        vector<Volunteer*> &getVolunteers(); //new method that returns the volunteers
-        ~WareHouse();//destructor
+        int getOrderCounter();
+        vector<Order*> &getPendingOrders(); 
+        vector<Order*> &getCompletedOrders(); 
+        vector<Order*> &getinProcessOrders(); 
+        vector<Customer*> &getCustomers(); 
+        vector<Volunteer*> &getVolunteers(); 
+        
+		//rule of 5
+		~WareHouse();//destructor
         WareHouse(const WareHouse &other);//copy constructor
         WareHouse &operator=(const WareHouse &other);//copy assignment operator
         WareHouse&operator=(WareHouse &&other); //move assignment operator
