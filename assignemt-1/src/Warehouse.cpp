@@ -253,8 +253,8 @@ int WareHouse::getOrderCounter(){
 }
 
 void WareHouse::deleteAll(){
-    actionLog.clear();
-    vollenuteers.clear();
+    actionsLog.clear();
+    volunteers.clear();
     pendingOrders.clear();
     inProcessOrders.clear();
     completedOrders.clear();
