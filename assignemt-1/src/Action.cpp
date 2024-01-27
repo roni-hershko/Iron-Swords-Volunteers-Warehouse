@@ -19,7 +19,7 @@ void BaseAction::error(string errorMsg){
     this->errorMsg=errorMsg;
 }//change status to error, and print
 
-string BaseAction::getErrorMsg() const{ // מה הERROE MSG
+string BaseAction::getErrorMsg() const{ 
     return errorMsg;
 } 
 
@@ -153,7 +153,6 @@ PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId
 void PrintCustomerStatus::act(WareHouse &wareHouse){
     if(wareHouse.getCustomer(customerId)==nullptr){
         error("Customer doesn't exist");
-        error();
     }
     else{
         cout<<"customerId : "+ customerId +"\n";
@@ -186,7 +185,6 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse){
 	Volunteer &volunteer = wareHouse.getVolunteer(VolunteerId);
 	if(volunteer==nullptr){
 		error("Volunteer doesnt exist");
-		error();
 	}
 	else {
 		cout << "VolunteerID:" << VolunteerId << endl; //print volunteer id	
@@ -246,27 +244,7 @@ string PrintActionsLog::toString() const{
 close::close(){}//constructor
 
 void close::act(warehouse &wareHouse){ 
-	for(int i=0; i<wareHouse.getPendingOrders().size(); i++){
-		cout<< "order" wareHouse.getPendingOrders()[i].getOrderCounter() + " " + wareHouse.getPendingOrders()[i]->getId() + " " + wareHouse.getPendingOrders()[i]->getCustomerId() + " " + wareHouse.getPendingOrders()[i]->getStatus() + "\n";
-	}
-	for(int i=0; i<wareHouse.getCompletedOrders().size(); i++){
-		cout<< "order" wareHouse.getCompletedOrders()[i].getOrderCounter() + " " + wareHouse.getCompletedOrders()[i]->getId() + " " + wareHouse.getCompletedOrders()[i]->getCustomerId() + " " + wareHouse.getCompletedOrders()[i]->getStatus() + "\n";
-	}
-	for(int i=0; i<wareHouse.getinProcessOrders().size(); i++){
-		cout<< "order" wareHouse.getinProcessOrders()[i].getOrderCounter() + " " + wareHouse.getinProcessOrders()[i]->getId() + " " + wareHouse.getinProcessOrders()[i]->getCustomerId() + " " + wareHouse.getinProcessOrders()[i]->getStatus() + "\n";
-	}
-	
-	//free all memory
-	//for(int i=0; i<wareHouse.volunteers().size(); i++){
-		//delete wareHouse.Volunteers()[i];
-	//}
-    wareHouse.Volunteers.clear();
-    wareHouse.PendingOrders().clear();
-    wareHouse.CompletedOrders().clear();
-    wareHouse.inProcessOrders().clear();
-    wareHouse.Customers().clear();
-    wareHouse.ActionsLog().clear();
-	isOpen=false;
+	wareHouse.close();
 }
 
 close *close::clone() const{
