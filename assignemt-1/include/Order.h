@@ -28,6 +28,7 @@ class Order {
         int getDriverId() const;
         OrderStatus getStatus() const;
         const string toString() const;
+        virtual Order *clone() const; // new method
 
     private:
         const int id;
