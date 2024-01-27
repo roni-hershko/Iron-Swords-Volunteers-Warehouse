@@ -45,7 +45,6 @@ class WareHouse {
 		void deleteVolunteer(int volunteerId);
 		void deleteInProcessOrder(int orderid);
 
-		void printForClosing();
 		void getUserCommand(); //gets the user command
         void deleteAll(); //deletes all the objects in the warehouse
 

@@ -114,6 +114,7 @@ class PrintActionsLog : public BaseAction {
 class Close : public BaseAction {
     public:
         Close();
+        void printAll();//new method
         void act(WareHouse &wareHouse) override;
         Close *clone() const override;
         string toString() const override;

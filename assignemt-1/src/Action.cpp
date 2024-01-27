@@ -184,19 +184,18 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
         error("Customer doesn't exist");
     }
     else{
-        cout<<"customerId: "+ customerId <<endl;
+        cout<<"CustomerID: "+ customerId <<endl;
         vector<Order*> orderList = wareHouse.getCustomer(customerId)->getOrderList();
         for(int i=0; i < orderList.size(); i++){
-            cout<< "orderId: " + (*orderList[i]).getId() <<endl;
-			cout<< "orderStatus: " + OrderStatus((*orderList[i]).getStatus()) <<endl;
+            cout<< "orderID: <" + (*orderList[i]).getId() +"> /n"<<endl;
+			cout<< "orderStatus: " + OrderStatus((*orderList[i]).getStatus())+ "/n" <<endl;
         }
         if(wareHouse.getCustomer(customerId).canMakeOrder())
-            cout<<"\n num order left: " + wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getNumOrders() +"\n";
-        else cout<<"\n num order left: 0 ";
+            cout<<"num order left: " + wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getNumOrders() +"\n";
+        else cout<<"num order left: 0 ";
         complete();
     } 
     wareHouse.addAction(this);
-
 }
 
 PrintCustomerStatus *PrintCustomerStatus::clone() const {
@@ -210,64 +209,56 @@ string PrintCustomerStatus::toString() const{
 
          
 //PrintVolunteerStatus
-PrintVolunteerStatus :: PrintVolunteerStatus(int id) : volunteerId(id){} //constructor
+PrintVolunteerStatus :: PrintVolunteerStatus(int id) : VolunteerId(id){}//constructor
 
-void PrintVolunteerStatus::act(WareHouse &wareHouse){
-	
-	Volunteer &volunteer = wareHouse.getVolunteer(volunteerId);
-
-	if(volunteer.getId() == -1){
+void PrintVolunteerStatus ::act(WareHouse &wareHouse){
+	if(wareHouse.getVolunteer(VolunteerId)==nullptr){
 		error("Volunteer doesnt exist");
+		error();
 	}
 	else {
-		cout << "VolunteerID:" << std::to_string(volunteerId) << endl; 
-		cout << "isBusy: " << volunteer.isBusy() << endl; //check if bool can be printed
+		cout << "VolunteerID:" << VolunteerId << endl; //print volunteer id	
+		cout << "isBusy: " wareHouse.getVolunteer(VolunteerId)->isBusy()<< endl; //print is busy
 
-		if (volunteer.isBusy() == false){ //if the volunteer is not busy
+		if (wareHouse.getVolunteer(VolunteerId)->isBusy() == false){ //if the volunteer is not busy
 			cout << "OrderID: None" << endl; 
 			cout << "timeLeft: None" << endl; 
 			cout << "ordersLeft: None" << endl; 
 		}
-		else if (volunteer.isCollector()){ //if the volunteer is a collector
-			CollectorVolunteer &collector = dynamic_cast<CollectorVolunteer&>(volunteer);
-			cout << "OrderID: " + std::to_string(volunteer.getActiveOrderId())<< endl; //לודא שאכן מתעגכן האקטיב
-			cout << "timeLeft: " + std::to_string(collector.getTimeLeft()) << endl; 
-			if(collector.isLimited()){
-				LimitedCollectorVolunteer &limitedCollector = dynamic_cast<LimitedCollectorVolunteer&>(volunteer);
-				cout << "ordersLeft: " + std::to_string(limitedCollector.getMaxOrders()) << endl;
-			}
-		}	
+		else if (wareHouse.getVolunteer(VolunteerId).isCollector()){ //if the volunteer is a collector
+			cout << "OrderID:" wareHouse.getVolunteer(VolunteerId).getOrder().getId()<< endl;
+			cout << "timeLeft:" << wareHouse.getVolunteer(VolunteerId).getTimeLeft() << endl; 
+			if(wareHouse.getVolunteer(VolunteerId).getDistanceLeft() != nullptr)
+				cout << "ordersLeft:" << wareHouse.getVolunteer(VolunteerId).getDistanceLeft() << endl;
+		}
 		else { //if the volunteer is a driver
-			DriverVolunteer &driver = dynamic_cast<DriverVolunteer&>(volunteer);
-			cout << "OrderID: " + std::to_string(volunteer.getActiveOrderId())<< endl;
-			cout << "distanceLeft: " + std::to_string(driver.getDistanceLeft()) << endl; 
-			if (driver.isLimited()){
-				LimitedDriverVolunteer &limitedDriver = dynamic_cast<LimitedDriverVolunteer&>(volunteer);
-				cout << "ordersLeft: " + std::to_string(limitedDriver.getMaxOrders()) << endl;
-				}
+			cout << "OrderID:" wareHouse.getVolunteer(VolunteerId).getOrder().getId()<< endl;
+			cout << "distanceLeft:" << wareHouse.getVolunteer(VolunteerId).getDistanceLeft() << endl; 
+			if (wareHouse.getVolunteer(VolunteerId).getNumOrdersLeft() != nullptr)
+				cout << "ordersLeft:" << wareHouse.getVolunteer(VolunteerId).getNumOrdersLeft() << endl;
 		}
 		complete();
 	}
-    wareHouse.addAction(this);
+    wareHouse.actionLog.addAction(this);
 }
 
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const{
-	return new PrintVolunteerStatus(volunteerId);
+	return new PrintVolunteerStatus(VolunteerId);
 }
 
 string PrintVolunteerStatus::toString() const{
-	string stringStatus = ActionStatusToString(getStatus());
-	return "PrintVolunteerStatus" + std::to_string(volunteerId) + stringStatus;
+	return "PrintVolunteerStatus" + VolunteerId + status;
 }
+
 
 //PrintActionsLog
 PrintActionsLog::PrintActionsLog(){}//constructor
 
 void PrintActionsLog::act(WareHouse &wareHouse){
 	for(int i=0; i<wareHouse.getActions().size(); i++)
-		cout<< (wareHouse.getActions()[i])->toString()<<endl; 
+		cout<< wareHouse.getActions()[i].toString()"\n"; 
 	complete();
-    wareHouse.addAction(this);
+    wareHouse.actionLog.addAction(this);
 } 
 
 PrintActionsLog *PrintActionsLog::clone() const{
@@ -275,17 +266,34 @@ PrintActionsLog *PrintActionsLog::clone() const{
 }
 
 string PrintActionsLog::toString() const{
-	string stringStatus = ActionStatusToString(getStatus());
-	return "log" + stringStatus; 
+	return "log" + status; 
 }
 
 
 //close
 close::close(){}//constructor
 
+void close::printAll(){
+
+    for (auto order : pendingOrders)
+    {
+        cout << "<"+to_string(order->getId())+"> <"+ to_string(order->getCustomerId())+"> <pendeing>" << endl;
+    }
+    cout << "/n" << endl;
+    for (auto order : inProcessOrders)
+    {
+        cout << "<"+to_string(order->getId())+"> <"+ to_string(order->getCustomerId())+"> <inProcess>" << endl;
+    }
+    cout << "/n" << endl;
+    for (auto order : completedOrders)
+    {
+        cout << "<"+to_string(order->getId())+"> <"+ to_string(order->getCustomerId())+"> <complete>" << endl;
+    }
+}
+
 void close::act(warehouse &wareHouse){ 
 	wareHouse.close();
-	//print all actionlog
+    wareHouse.~WareHouse();
 }
 
 close *close::clone() const{
@@ -301,11 +309,8 @@ string close::toString() const{
 BackupWareHouse::BackupWareHouse(){}//constructor
 
 void BackupWareHouse::act(WareHouse &wareHouse){
-    if(backup!=wareHouse){
-        delete backup;
-        backup = wareHouse;
-    }
-}//copy assignment operator
+    return new WareHouse(wareHouse);
+}//copy constructor
 
 BackupWareHouse *BackupWareHouse::clone() const {
 	return new BackupWareHouse();

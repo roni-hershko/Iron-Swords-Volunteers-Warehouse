@@ -273,34 +273,6 @@ void WareHouse::deleteAll(){ //delete the vector itself?
     isOpen=false;
 }
 
-void wareHouse::printForClosing(){
-	cout << "Pending orders:" << endl;
-	for (auto order : pendingOrders)
-	{
-		cout << *order << endl;
-	}
-	cout << "In process orders:" << endl;
-	for (auto order : inProcessOrders)
-	{
-		cout << *order << endl;
-	}
-	cout << "Completed orders:" << endl;
-	for (auto order : completedOrders)
-	{
-		cout << *order << endl;
-	}
-	cout << "Volunteers:" << endl;
-	for (auto volunteer : volunteers)
-	{
-		cout << *volunteer << endl;
-	}
-	cout << "Customers:" << endl;
-	for (auto customer : customers)
-	{
-		cout << *customer << endl;
-	}
-}
-
 
 void WareHouse::deleteInProcessOrder(int orderid)
 {
