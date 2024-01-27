@@ -29,30 +29,38 @@ WareHouse::WareHouse(const string &configFilePath)
             string name, customerType;
             int distance, maxOrders;
             iss >> name >> customerType >> distance >> maxOrders;
-            customers.push_back(Customer(name, customerType, distance, maxOrders));
+            if(customerType=="Civilian"){
+                customers.push_back(&CivilianCustomer(customerCounter,name, distance, maxOrders));
+            }
+            else{
+                customers.push_back(&SoldierCustomer(customerCounter,name, distance, maxOrders));
+            }
             customerCounter++;
         }
         else if (type == "volunteer")
         {
             string name, volunteerRole;
             int cooldown, maxDistance, distancePerStep, maxOrders;
-            iss >> name >> volunteerRole >> cooldown >> maxDistance >> distancePerStep >> maxOrders;
-
+            iss >> name >> volunteerRole;
             if (volunteerRole == "collector")
             {
-                volunteers.push_back(new CollectorVolunteer(volunteerCounter, name, cooldown));
+                iss >> cooldown;
+                volunteers.push_back(&CollectorVolunteer(volunteerCounter, name, cooldown));
             }
             else if (volunteerRole == "limited_collector")
             {
-                volunteers.push_back(make_shared<LimitedCollector>(name, cooldown, maxOrders));
+                iss >> cooldown >> maxOrders;
+                volunteers.push_back(&LimitedCollectorVolunteer(volunteerCounter, name, cooldown, maxOrders));
             }
             else if (volunteerRole == "driver")
             {
-                volunteers.push_back(make_shared<Driver>(name, cooldown, maxDistance, distancePerStep));
+                iss >> maxDistance >> distancePerStep;
+                volunteers.push_back(&DriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep));
             }
             else if (volunteerRole == "limited_driver")
             {
-                volunteers.push_back(make_shared<LimitedDriver>(name, cooldown, maxDistance, distancePerStep, maxOrders));
+                iss >> maxDistance >> distancePerStep >> maxOrders;
+                volunteers.push_back(&LimitedDriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep, maxOrders));
             }
 
             volunteerCounter++;
@@ -150,16 +158,9 @@ void WareHouse::getUserCommand(){
     }
  }
 
-void WareHouse::addOrder(Order* order){ //roni change this method
+void WareHouse::addOrder(Order* order){ 
 	pendingOrders.push_back(order);
 	orderCounter++;
-   // if(order->getStatus()==OrderStatus::COMPLETED){
-       // completedOrders.push_back(order);
-   // }
-   // else if (order->getStatus()==OrderStatus::PENDING){
-       //  pendingOrders.push_back(order);
-   // }
-   // else inProcessOrders.push_back(order);
 }
 
 void WareHouse::addAction(BaseAction* action){
@@ -205,7 +206,7 @@ Order &WareHouse::getOrder(int orderId) const{
             return *order;
         }
     }
-    else return nullptr;
+    return nullptr;
 }
 
 const vector<BaseAction*> &WareHouse::getActions() const{
@@ -252,9 +253,20 @@ int WareHouse::getOrderCounter(){
     return orderCounter;
 }
 
-//Rule of 5
- WareHouse::~WareHouse(){// need to do
+void WareHouse::deleteAll(){
+    actionsLog.clear();
+    volunteers.clear();
+    pendingOrders.clear();
+    inProcessOrders.clear();
+    completedOrders.clear();
+    customers.clear();
+    isOpen=false;
+}
 
+
+//Rule of 5
+ WareHouse::~WareHouse(){
+    deleteAll();
  }
 
 WareHouse::WareHouse(const WareHouse &other):isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){

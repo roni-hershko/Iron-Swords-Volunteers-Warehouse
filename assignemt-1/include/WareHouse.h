@@ -43,11 +43,10 @@ class WareHouse {
         WareHouse(const WareHouse &other);//copy constructor
         WareHouse &operator=(const WareHouse &other);//copy assignment operator
         WareHouse&operator=(WareHouse &&other); //move assignment operator
-        WareHouse(WareHouse &&other); //move constructor
-        
-    
-
-	private:
+        WareHouse(WareHouse &&other);////move constructor
+        void getUserCommand();  //new method that gets the user command
+        void deleteAll(); //new method that deletes all the objects in the warehouse
+    private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
         vector<Volunteer*> volunteers;
