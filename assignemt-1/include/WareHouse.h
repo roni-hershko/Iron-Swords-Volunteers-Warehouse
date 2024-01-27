@@ -5,6 +5,7 @@
 #include "Order.h"
 #include "Customer.h"
 
+
 class BaseAction;
 class Volunteer;
 
@@ -18,20 +19,24 @@ class WareHouse {
         void start();
         void addOrder(Order* order);
         void addAction(BaseAction* action);
-        void addVolunteer(Volunteer* volunteer); //new method that adds a volunteer to the warehouse
-        void addCustomer(Customer* customer); //new method that adds a customer to the warehouse
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
         Order &getOrder(int orderId) const;
         const vector<BaseAction*> &getActions() const;
         void close();
         void open();
+
+		CollectorVolunteer dummy_volunteer;
+		CivilianCustomer dummy_Customer;
+		Order dummy_Order;
         
 		//new methods
 		void getUserCommand(); //assist start() method
 		int getCustomerCounter();
         int getVolunteerCounter();
         int getOrderCounter();
+		void addVolunteer(Volunteer* volunteer); 
+        void addCustomer(Customer* customer); 
         vector<Order*> &getPendingOrders(); 
         vector<Order*> &getCompletedOrders(); 
         vector<Order*> &getinProcessOrders(); 

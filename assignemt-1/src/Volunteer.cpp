@@ -79,6 +79,9 @@ bool CollectorVolunteer::isCollector() const{
     return true;
 }
 
+bool CollectorVolunteer::isLimited() const{
+	return false;
+}
 string CollectorVolunteer::toString() const{ //get ready for printVolunteerStatus function ???
     return "Collector Volunteer: " + getName() +" id " + std::to_string(getId());
 }
@@ -112,6 +115,10 @@ int LimitedCollectorVolunteer::getMaxOrders() const{
 
 int LimitedCollectorVolunteer::getNumOrdersLeft() const{
     return ordersLeft;
+}
+
+bool LimitedCollectorVolunteer::isLimited() const{
+	return true;
 }
 
 string LimitedCollectorVolunteer::toString() const{ 
@@ -179,6 +186,10 @@ bool DriverVolunteer::isCollector() const{
     return false;
 }
 
+bool DriverVolunteer::isLimited() const{
+	return false;
+}
+
 string DriverVolunteer::toString() const{ //get ready for printVolunteerStatus function ???
     return "Driver Volunteer: " + getName() +" id " + std::to_string(getId());
 }
@@ -212,6 +223,10 @@ bool LimitedDriverVolunteer::canTakeOrder(const Order &order) const{
 void LimitedDriverVolunteer::acceptOrder(const Order &order){
     DriverVolunteer::acceptOrder(order);
     ordersLeft--;
+}
+
+bool LimitedDriverVolunteer::isLimited() const{
+	return true;
 }
 
 string LimitedDriverVolunteer::toString() const{ 

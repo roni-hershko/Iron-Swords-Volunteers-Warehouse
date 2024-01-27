@@ -18,6 +18,7 @@ class BaseAction{
     public:
         BaseAction();
         ActionStatus getStatus() const;
+		string ActionStatusToString(ActionStatus status) const; //converts ActionStatus to string
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
@@ -62,6 +63,7 @@ class AddCustomer : public BaseAction {
         void act(WareHouse &wareHouse) override;
         AddCustomer *clone() const override;
         string toString() const override;
+		CustomerType StringToCustomerType(string customerType); //converts string to CustomerType for constructor
     private:
         const string customerName;
         const CustomerType customerType;
@@ -75,6 +77,7 @@ class PrintOrderStatus : public BaseAction {
         void act(WareHouse &wareHouse) override;
         PrintOrderStatus *clone() const override;
         string toString() const override;
+		string OrderStatusToString(OrderStatus status) const; //converts OrderStatus to string
     private:
         const int orderId;
 };

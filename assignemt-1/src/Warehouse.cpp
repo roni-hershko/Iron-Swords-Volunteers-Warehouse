@@ -13,7 +13,9 @@ using namespace std;
 
 
 WareHouse::WareHouse(const string &configFilePath) 
-	: isOpen(true), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), customerCounter(0), volunteerCounter(0)
+	: isOpen(true), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), 
+	customerCounter(0), volunteerCounter(0), 
+	dummy_volunteer(-1, "dummy", 0), dummy_Customer(-1, "dummy", 0, 0), dummy_Order(-1, 0, 0)
 {
     ifstream configFile(configFilePath);
     string line;
@@ -187,7 +189,14 @@ Customer &WareHouse::getCustomer(int customerId) const{
 }
 
 Volunteer &WareHouse::getVolunteer(int volunteerId) const{
-    return *volunteers[volunteerId];
+	// for(auto volunteer:volunteers){
+	// 	if(volunteer->getId()==volunteerId){
+	// 		return *volunteer;
+	// 	}
+	// }
+    if (volunteerId == -1 || volunteerId>=volunteers.size())
+		return dummy_volunteer;
+	return *volunteers[volunteerId];
 }
 
 Order &WareHouse::getOrder(int orderId) const{
