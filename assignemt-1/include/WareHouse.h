@@ -37,6 +37,13 @@ class WareHouse {
         vector<Order*> &getinProcessOrders(); 
         vector<Customer*> &getCustomers(); 
         vector<Volunteer*> &getVolunteers(); 
+		void deleteVolunteer(int volunteerId);
+		void deleteInProcessOrder(int orderid);
+
+		void printForClosing();
+		void getUserCommand(); //gets the user command
+        void deleteAll(); //deletes all the objects in the warehouse
+
         
 		//rule of 5
 		~WareHouse();//destructor
@@ -44,8 +51,7 @@ class WareHouse {
         WareHouse &operator=(const WareHouse &other);//copy assignment operator
         WareHouse&operator=(WareHouse &&other); //move assignment operator
         WareHouse(WareHouse &&other);////move constructor
-        void getUserCommand();  //new method that gets the user command
-        void deleteAll(); //new method that deletes all the objects in the warehouse
+
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;

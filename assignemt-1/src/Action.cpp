@@ -251,6 +251,7 @@ close::close(){}//constructor
 
 void close::act(warehouse &wareHouse){ 
 	wareHouse.close();
+	//print all actionlog
 }
 
 close *close::clone() const{
