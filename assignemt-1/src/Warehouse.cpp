@@ -179,43 +179,40 @@ void WareHouse::addCustomer(Customer* customer){
     customerCounter++;
 }; //new method that adds a customer to the warehouse
 
+
 Customer &WareHouse::getCustomer(int customerId) const{ 
-    for(auto customer:customers){
-        if(customer->getId()==customerId){
-            return *customer;
-        }
-    }
-    return nullptr;
+    if (customerId == -1 || customerId>=customers.size())
+		return *dummy_Customer;
+	return *customers[customerId];
 }
 
 Volunteer &WareHouse::getVolunteer(int volunteerId) const{
-	// for(auto volunteer:volunteers){
-	// 	if(volunteer->getId()==volunteerId){
-	// 		return *volunteer;
-	// 	}
-	// }
     if (volunteerId == -1 || volunteerId>=volunteers.size())
-		return dummy_volunteer;
+		return *dummy_Volunteer;
 	return *volunteers[volunteerId];
 }
 
 Order &WareHouse::getOrder(int orderId) const{
-    for(auto order:pendingOrders){
-        if(order->getId()==orderId){
-            return *order;
-        }
-    }
-    for(auto order:inProcessOrders){
-        if(order->getId()==orderId){
-            return *order;
-        }
-    }
-   for(auto order:completedOrders){
-        if(order->getId()==orderId){
-            return *order;
-        }
-    }
-    return nullptr;
+	if(orderId==-1 || orderId>=orderCounter){
+		return *dummy_Order;
+	}
+	else{
+    	for(auto order:pendingOrders){
+        	if(order->getId()==orderId){
+            	return *order;
+       		}
+    	}
+    	for(auto order:inProcessOrders){
+        	if(order->getId()==orderId){
+            	return *order;
+        	}
+  		}
+  		 for(auto order:completedOrders){
+       		 if(order->getId()==orderId){
+            	return *order;
+        	}
+   		}
+	}
 }
 
 const vector<BaseAction*> &WareHouse::getActions() const{
@@ -262,7 +259,7 @@ int WareHouse::getOrderCounter(){
     return orderCounter;
 }
 
-void WareHouse::deleteAll(){ //delete the vector itself?
+void WareHouse::deleteAll(){ 
 
     actionsLog.clear();
     volunteers.clear();
@@ -273,14 +270,10 @@ void WareHouse::deleteAll(){ //delete the vector itself?
     isOpen=false;
 }
 
-
-void WareHouse::deleteInProcessOrder(int orderid)
-{
-    for (int i = 0; i < inProcessOrders.size(); ++i)
-    {
+void WareHouse::deleteInProcessOrder(int orderid){
+    for (int i = 0; i < inProcessOrders.size(); ++i){
         Order *order = inProcessOrders[i];
-        if (order->getId() == orderid)
-        {
+        if (order->getId() == orderid){
             delete order;
             inProcessOrders.erase(inProcessOrders.begin() + i);
             return;
@@ -298,7 +291,6 @@ void WareHouse::deleteVolunteer(int volunteerId){
         }
     }
 }
-
 
 //Rule of 5
  WareHouse::~WareHouse(){ //destructor
