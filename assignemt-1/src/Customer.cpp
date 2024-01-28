@@ -6,7 +6,7 @@ using std::vector;
 
 
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders)
-	: id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders){}
+	: id(id), name(name), locationDistance(locationDistance), maxOrders(maxOrders), ordersId(){ }
 
 const std::string &Customer::getName() const {
 	return name;
@@ -53,7 +53,7 @@ SoldierCustomer::SoldierCustomer(int id, const string &name, int locationDistanc
 
 SoldierCustomer* SoldierCustomer::clone() const {
     SoldierCustomer* newScus= new SoldierCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
-    for(int i=0; i<getOrdersIds().size(); i++){
+    for(int i=0; i<getNumOrders(); i++){
         newScus->addOrder(getOrdersIds()[i]);
     }
     return newScus;
@@ -64,7 +64,7 @@ CivilianCustomer::CivilianCustomer(int id, const string &name, int locationDista
 	
 CivilianCustomer* CivilianCustomer::clone() const{
     CivilianCustomer* newCcus= new CivilianCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
-    for(int i=0; i<getOrdersIds().size(); i++){
+    for(int i=0; i<getNumOrders(); i++){
         newCcus->addOrder(getOrdersIds()[i]);
     }
     return newCcus;

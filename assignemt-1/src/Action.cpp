@@ -198,13 +198,9 @@ void AddCustomer::act(WareHouse &wareHouse){
 
 AddCustomer *AddCustomer::clone() const{
     if(customerType == CustomerType::Civilian){
-        AddCustomer* newCcus= new AddCustomer(customerName, "Civilian",  distance,  maxOrders);
-        newCcus->customerId=customerId; //מה הכוונה?
-        return newCcus;
+       return new AddCustomer(customerName, "Civilian",  distance,  maxOrders);
     }
-    AddCustomer* newScus= new AddCustomer(customerName, "Soldier",  distance,  maxOrders);
-    newScus->customerId=customerId; //מה הכוונה?
-    return newScus;
+    return new AddCustomer(customerName, "Soldier",  distance,  maxOrders);
 }
 
 string AddCustomer::toString() const{
@@ -275,13 +271,13 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
     }
     else{
         cout<<"CustomerID: "+ customerId <<endl;
-        vector<Order*> orderList = wareHouse.getCustomer(customerId)->getOrderList();
-        for(int i=0; i < orderList.size(); i++){
-            cout<< "orderID: <" + (*orderList[i]).getId() +"> /n"<<endl;
-			cout<< "orderStatus: " + OrderStatus((*orderList[i]).getStatus())+ "/n" <<endl;
+        vector<Order*> orderList = wareHouse.getCustomer(customerId).getOrdersIds();
+        for(int i=0; i < wareHouse.getCustomer(customerId).getNumOrders(); i++){
+            cout<< "orderID: <" + to_string((*orderList[i]).getId()) +"> /n"<<endl;
+			cout<< "orderStatus: " + (*orderList[i]).OrderStatusToString()+ "/n" <<endl;
         }
         if(wareHouse.getCustomer(customerId).canMakeOrder())
-            cout<<"num order left: " + wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getNumOrders() +"\n";
+            cout<<"num order left: " + to_string(wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getNumOrders()) +"\n";
         else cout<<"num order left: 0 ";
         complete();
     } 
@@ -299,7 +295,7 @@ string PrintCustomerStatus::toString() const{
 
          
 //PrintVolunteerStatus
-PrintVolunteerStatus :: PrintVolunteerStatus(int id) : volunteerId(id){} //constructor
+PrintVolunteerStatus :: PrintVolunteerStatus(int id) : volunteerId(id){}//constructor
 
 void PrintVolunteerStatus::act(WareHouse &wareHouse){
 	
@@ -372,9 +368,27 @@ string PrintActionsLog::toString() const{
 //close
 Close::Close(){}//constructor
 
-void Close::act(warehouse &wareHouse){ 
+void close::printAll(){
+
+    for (auto order : pendingOrders)
+    {
+        cout << to_string(order->getId())+" "+ to_string(order->getCustomerId())+" pendeing" << endl;
+    }
+    cout << "/n" << endl;
+    for (auto order : inProcessOrders)
+    {
+        cout << to_string(order->getId())+" "+ to_string(order->getCustomerId())+" inProcess" << endl;
+    }
+    cout << "/n" << endl;
+    for (auto order : completedOrders)
+    {
+        cout << to_string(order->getId())+" "+ to_string(order->getCustomerId())+" complete" << endl;
+    }
+}
+
+void close::act(warehouse &wareHouse){ 
+    printAll();
 	wareHouse.close();
-	//print all actionlog
 }
 
 Close *Close::clone() const{
@@ -390,11 +404,9 @@ string Close::toString() const{
 BackupWareHouse::BackupWareHouse(){}//constructor
 
 void BackupWareHouse::act(WareHouse &wareHouse){
-    if(backup!=wareHouse){
-        delete backup;
-        backup = wareHouse;
-    }
-}//copy assignment operator
+    Backup.deleteAll();
+    Backup= new WareHouse(wareHouse);
+}//copy constructor
 
 BackupWareHouse *BackupWareHouse::clone() const {
 	return new BackupWareHouse();

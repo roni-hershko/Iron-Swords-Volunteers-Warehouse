@@ -42,7 +42,7 @@ OrderStatus Order::getStatus() const {
 const string Order::toString() const { 
 
     string statusString;
-    OrderStatus status; 
+    OrderStatus status = OrderStatus::PENDING; //new line
 	string collector;
 	string driver;
 
