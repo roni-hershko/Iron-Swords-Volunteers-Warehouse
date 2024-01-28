@@ -29,7 +29,6 @@ class Order {
         OrderStatus getStatus() const;
         const string toString() const;
         Order *clone() const; // new method
-        string OrderStatusToString() const; // new method
 
     private:
         const int id;
