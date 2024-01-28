@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
-
-#include "Order.h"
-#include "Customer.h"
+#include "../include/Order.h"
+#include "../include/Volunteer.h"
+#include "../include/Customer.h"
 
 
 class BaseAction;
@@ -44,8 +44,6 @@ class WareHouse {
         vector<Volunteer*> &getVolunteers(); 
 		void deleteVolunteer(int volunteerId);
 		void deleteInProcessOrder(int orderid);
-
-		void getUserCommand(); //gets the user command
         void deleteAll(); //deletes all the objects in the warehouse
 
         

@@ -5,7 +5,6 @@
 #include "../include/Order.h"
 #include "../include/Volunteer.h"
 #include "../include/Customer.h"
-#include "../include/Order.h"
 using std::string;
 using std::vector;
 
@@ -54,19 +53,20 @@ void SimulateStep::makeTheStep(WareHouse &wareHouse){
 	vector<Order*> &pendingsOrders = wareHouse.getPendingOrders();
     vector<Order*> &inProcessOrders = wareHouse.getinProcessOrders();
 	vector<Order*> &completedOrders = wareHouse.getCompletedOrders();
-	vector<Customer*> &customers = wareHouse.getCustomers();
-    vector<Volunteer*> &volunteers = wareHouse.getVolunteers();
 
 	//treat the case of orders in pending
-    for (int i = 0; i < pendingsOrders.size(); i++){ //pending orders
-        Order *order = pendingsOrders[i];
-		assignVolunteer(wareHouse, pendingsOrders[i]); //return error if there is no colector avalible
-		pendingsOrders.erase(pendingsOrders.begin() + i);// Move the order from pendingOrders to inProcessOrders
-		inProcessOrders.push_back(order);
+	int counter=0;
+	for(vector<Order*>::iterator it = pendingsOrders.begin(); it != pendingsOrders.end(); it++){
+		counter++; 
+		if(assignVolunteer(wareHouse,*it)){ //if there is no avalible colector keep the order in pendingOrders
+			pendingsOrders.erase(pendingsOrders.begin() + counter);// Move the order from pendingOrders to inProcessOrders
+			inProcessOrders.push_back(*it);
+		}
 	}
 	//treat the case of orders in process
-	for(int i = 0; i < inProcessOrders.size(); i++){ 
-		Order *order = inProcessOrders[i];
+	for(vector<Order*>::iterator it = inProcessOrders.begin(); it != inProcessOrders.end(); it++){
+		counter++; 
+		Order *order = *it;
 		//if the order is collecting
 		if(order->getStatus() == OrderStatus::COLLECTING){ 
             int collectorId = order->getCollectorId();
@@ -75,8 +75,8 @@ void SimulateStep::makeTheStep(WareHouse &wareHouse){
 			// if order has finished collecting move to pendingOrders vector
             if (collector.getActiveOrderId() == NO_ORDER) {
 				//no need to change the order status untill the driver will take the order only happen in the next step
-                inProcessOrders.erase(inProcessOrders.begin() + i);
-                i--;
+                inProcessOrders.erase(inProcessOrders.begin() + counter);
+                counter--;
                 pendingsOrders.push_back(order);
             }
 			// if the collector is limitedCollector and has no orders left delete the collector
@@ -92,8 +92,8 @@ void SimulateStep::makeTheStep(WareHouse &wareHouse){
 			// if the order has finished delivering move to completedOrders vector
             if (driver.getActiveOrderId() == NO_ORDER){
                 order->setStatus(OrderStatus::COMPLETED);
-                inProcessOrders.erase(inProcessOrders.begin() + i);
-                i--;
+                inProcessOrders.erase(inProcessOrders.begin() + counter);
+                counter--;
                 completedOrders.push_back(order);
             }
             if (!driver.hasOrdersLeft())
@@ -102,20 +102,15 @@ void SimulateStep::makeTheStep(WareHouse &wareHouse){
         }
     }
 }
-		//	Volunteer &volunteer = wareHouse.getVolunteer(order->getCollectorId());
-		//	if(volunteer.isBusy() == false){ //if the volunteer is not busy
-		//		volunteer.acceptOrder(*order); //accept the order
-		//		order->setStatus(OrderStatus::COLLECTING); //change the order status
 
-
-void SimulateStep::assignVolunteer(WareHouse &wareHouse, Order *order){
+bool SimulateStep::assignVolunteer(WareHouse &wareHouse, Order *order){
 	vector<Volunteer*> &volunteers = wareHouse.getVolunteers();
 	bool isAssigned = false;
 	OrderStatus orderStatus = order->getStatus();
 
 	if(orderStatus ==  OrderStatus::PENDING){ //if the order is pending for collector
-		for (int i = 0; i < volunteers.size() || isAssigned == false; i++){ //iterate over the volunteers and there is collector avalible
-			Volunteer *volunteer = volunteers[i];
+		for (vector<Volunteer*>::iterator it = volunteers.begin(); it != volunteers.end() || isAssigned == false ; it++){ //iterate over the volunteers and there is collector avalible
+			Volunteer *volunteer = *it;
 			if (volunteer->canTakeOrder(*order) == true && volunteer->isCollector()){ 
 				volunteer->acceptOrder(*order); //accept the order
 				order->setStatus(OrderStatus::COLLECTING); //change the order status
@@ -124,12 +119,12 @@ void SimulateStep::assignVolunteer(WareHouse &wareHouse, Order *order){
 			}
 		}
 		if(isAssigned == false)
-			error("No collector can take the order");
+			return false;
 	}
 	
 	else if(orderStatus ==  OrderStatus::COLLECTING){ //if the order is pending for driver
-		for (int i = 0; i < volunteers.size() || isAssigned == false; i++){ 
-			Volunteer *volunteer = volunteers[i];
+		for (vector<Volunteer*>::iterator it = volunteers.begin(); it != volunteers.end() || isAssigned == false ; it++){ 
+			Volunteer *volunteer = *it;
 			if (volunteer->canTakeOrder(*order) == true && volunteer->isCollector()==false){ 
 				volunteer->acceptOrder(*order); 
 				order->setStatus(OrderStatus::DELIVERING); 
@@ -138,9 +133,10 @@ void SimulateStep::assignVolunteer(WareHouse &wareHouse, Order *order){
 			}
 		}
 		if(isAssigned == false){
-			error("No driver can take the order");
+			return false;
 		}
 	}
+	return true;
 }
 	
 SimulateStep *SimulateStep::clone() const{
@@ -148,7 +144,8 @@ SimulateStep *SimulateStep::clone() const{
 }
 
 string SimulateStep::toString() const{
-	return "SimulateStep " + std::to_string(numOfSteps) + status;
+	string stringStatus= ActionStatusToString(getStatus());
+	return "SimulateStep " + std::to_string(numOfSteps) + stringStatus;
 }
 
 
@@ -220,7 +217,7 @@ CustomerType AddCustomer::StringToCustomerType(string customerType){
 
 
 //PrintOrderStatus
-PrintOrderStatus::PrintOrderStatus(int id) : orderId(id){}//constructor
+PrintOrderStatus::PrintOrderStatus(int id) : orderId(id){}
 
 void PrintOrderStatus::act(WareHouse &wareHouse){
 	Order &order = wareHouse.getOrder(orderId);
@@ -228,14 +225,14 @@ void PrintOrderStatus::act(WareHouse &wareHouse){
         error("Order doesn't exist");
     else{
         cout << "OrderId: " + std::to_string(order.getId()) << endl;
-		cout << "OrderStatus: " + OrderStatusToString(order.getStatus()) << endl; 
-        cout << "CustomerId: " + order.getCustomerId() << endl; 
-        cout << "Collector: " + order.getCollectorId() << endl;
-        cout << "Driver: " + order.getDriverId()<< endl;
+		cout << "OrderStatus: " + order.OrderStatusToString() << endl; 
+        cout << "CustomerId: " + std::to_string(order.getCustomerId()) << endl; 
+        cout << "Collector: " + std::to_string(order.getCollectorId()) << endl;
+        cout << "Driver: " + std::to_string(order.getDriverId())<< endl;
     }
     complete();
     wareHouse.addAction(this);
-} //print order status, maybe error 
+} 
 
 PrintOrderStatus *PrintOrderStatus::clone() const{
     return new PrintOrderStatus(orderId);
@@ -244,43 +241,29 @@ PrintOrderStatus *PrintOrderStatus::clone() const{
 string PrintOrderStatus::toString() const{ 
 	string stringStatus= ActionStatusToString(getStatus());
     return "OrderStatus " + std::to_string(orderId) + stringStatus;
-}   
+}  
 
-string OrderStatusToString(OrderStatus status){
-	switch(status){
-		case OrderStatus::PENDING:
-			return "PENDING";
-		case OrderStatus::COLLECTING:
-			return "COLLECTING";
-		case OrderStatus::DELIVERING:
-			return "DELIVERING";
-		case OrderStatus::COMPLETED:
-			return "COMPLETED";
-	}
-	return "ERROR";
-}
- 
 
 //PrintCustomerStatus
 PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId){}//constructor
 
 void PrintCustomerStatus::act(WareHouse &wareHouse){
 	Customer &customer = wareHouse.getCustomer(customerId);
-    if(customer.getId() == -1){
-        error("Customer doesn't exist");
-    }
-    else{
-        cout<<"CustomerID: "+ customerId <<endl;
-        vector<Order*> orderList = wareHouse.getCustomer(customerId).getOrdersIds();
-        for(int i=0; i < wareHouse.getCustomer(customerId).getNumOrders(); i++){
-            cout<< "orderID: <" + to_string((*orderList[i]).getId()) +"> /n"<<endl;
-			cout<< "orderStatus: " + (*orderList[i]).OrderStatusToString()+ "/n" <<endl;
-        }
-        if(wareHouse.getCustomer(customerId).canMakeOrder())
-            cout<<"num order left: " + to_string(wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getNumOrders()) +"\n";
-        else cout<<"num order left: 0 ";
-        complete();
-    } 
+	if(customer.getId() == -1){
+		error("Customer doesn't exist");
+	}
+	else{
+		cout<<"CustomerID: "+ std::to_string(customerId) <<endl;
+		vector<int> orderList = wareHouse.getCustomer(customerId).getOrdersIds();
+		for(int i=0; i < wareHouse.getCustomer(customerId).getNumOrders(); i++){
+			cout<< "orderID: " + to_string(orderList[i]) +" /n"<<endl;
+			cout<< "orderStatus: " + wareHouse.getOrder(orderList[i]).OrderStatusToString()+ "/n" <<endl;
+		}
+		if(wareHouse.getCustomer(customerId).canMakeOrder())
+			cout<<"num order left: " + to_string(wareHouse.getCustomer(customerId).getMaxOrders() - wareHouse.getCustomer(customerId).getNumOrders()) +"\n";
+		else cout<<"num order left: 0 ";
+		complete();
+	} 
     wareHouse.addAction(this);
 }
 
@@ -345,12 +328,14 @@ string PrintVolunteerStatus::toString() const{
 	return "PrintVolunteerStatus" + std::to_string(volunteerId) + stringStatus;
 }
 
+
 //PrintActionsLog
 PrintActionsLog::PrintActionsLog(){}//constructor
 
 void PrintActionsLog::act(WareHouse &wareHouse){
-	for(int i=0; i<wareHouse.getActions().size(); i++)
-		cout<< (wareHouse.getActions()[i])->toString()<<endl; 
+	for (vector<BaseAction*>::const_iterator it = (wareHouse.getActions()).begin(); it != (wareHouse.getActions()).end(); it++) //iterate over the volunteers and there is collector avalible
+		cout<< (*it)->toString()<<endl; 
+
 	complete();
     wareHouse.addAction(this);
 } 
@@ -368,45 +353,39 @@ string PrintActionsLog::toString() const{
 //close
 Close::Close(){}//constructor
 
-void close::printAll(){
+void Close::act(WareHouse &wareHouse){ 
+    printAll(wareHouse);
+	wareHouse.close();
+}
 
-    for (auto order : pendingOrders)
-    {
+void Close::printAll(WareHouse &wareHouse){
+
+    for (auto order : wareHouse.getPendingOrders()){
         cout << to_string(order->getId())+" "+ to_string(order->getCustomerId())+" pendeing" << endl;
     }
-    cout << "/n" << endl;
-    for (auto order : inProcessOrders)
-    {
+    for (auto order : wareHouse.getinProcessOrders()){
         cout << to_string(order->getId())+" "+ to_string(order->getCustomerId())+" inProcess" << endl;
     }
-    cout << "/n" << endl;
-    for (auto order : completedOrders)
-    {
+    for (auto order : wareHouse.getCompletedOrders()){
         cout << to_string(order->getId())+" "+ to_string(order->getCustomerId())+" complete" << endl;
     }
 }
 
-void close::act(warehouse &wareHouse){ 
-    printAll();
-	wareHouse.close();
-}
-
 Close *Close::clone() const{
-	return new close();
+	return new Close();
 }
 
 string Close::toString() const{
 	return "close";
 }
 
-
+extern WareHouse* backup;
 //backup warehouse
 BackupWareHouse::BackupWareHouse(){}//constructor
 
 void BackupWareHouse::act(WareHouse &wareHouse){
-    Backup.deleteAll();
-    Backup= new WareHouse(wareHouse);
-}//copy constructor
+    backup= &wareHouse;
+}//copy assignment operator
 
 BackupWareHouse *BackupWareHouse::clone() const {
 	return new BackupWareHouse();
@@ -424,7 +403,7 @@ void RestoreWareHouse::act(WareHouse &wareHouse){
 if(backup == nullptr)
 	error("No backup available");
 else
-	wareHouse = backup; //move assignment opertor
+	wareHouse = *backup; //move assignment opertor
 }
 
 RestoreWareHouse *RestoreWareHouse::clone() const{

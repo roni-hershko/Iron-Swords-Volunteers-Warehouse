@@ -8,6 +8,7 @@ using std::vector;
 #define NO_ORDER -1
 
 class Volunteer {
+
     public:
         Volunteer(int id, const string &name);
         int getId() const;
@@ -20,19 +21,20 @@ class Volunteer {
         virtual void acceptOrder(const Order &order) = 0; // Prepare for new order(Reset activeOrderId,TimeLeft,DistanceLeft,OrdersLeft depends on the volunteer type)
         virtual bool isCollector () const= 0;// NEW Signal whether the volunteer is a CollectorVolunteer
 		virtual bool isLimited() const= 0; // NEW Signal whether the volunteer is a LimitedVolunteer
-        
 		virtual void step() = 0; //Simulate volunteer step,if the volunteer finished the order, transfer activeOrderId to completedOrderId
-
         virtual string toString() const = 0;
         virtual Volunteer* clone() const = 0; //Return a copy of the volunteer
+		virtual ~Volunteer() = default;
 
     protected:
         int completedOrderId; //Initialized to NO_ORDER if no order has been completed yet
         int activeOrderId; //Initialized to NO_ORDER if no order is being processed
+
+	private:
+		const int id;
+		const string name;
     
-    private:
-        const int id;
-        const string name;
+
 
 };
 
@@ -113,6 +115,7 @@ class LimitedDriverVolunteer: public DriverVolunteer {
         void acceptOrder(const Order &order) override; // Assign distanceLeft to order's distance and decrease ordersLeft
 		bool isLimited() const override; //new
 		string toString() const override;
+
 
     private:
         const int maxOrders; // The number of orders the volunteer can process in the whole simulation

@@ -34,9 +34,7 @@ bool Customer::canMakeOrder() const {//Returns true if the customer didn't reach
     return false;
 } 
    
-const vector<int>& Customer::getOrdersIds() const { //maybe deep copy
-    //const vector<int> copyOrdersId=ordersId;
-    //return copyOrdersId;   
+const vector<int>& Customer::getOrdersIds() const {   
 	return ordersId;
 }
     
@@ -47,17 +45,19 @@ int Customer::addOrder(int orderId){
     }
     return -1;
 }; //return OrderId if order was added successfully, -1 otherwise
-        
+
+
 SoldierCustomer::SoldierCustomer(int id, const string &name, int locationDistance, int maxOrders)
 	: Customer(id, name, locationDistance, maxOrders) {}
 
 SoldierCustomer* SoldierCustomer::clone() const {
-    SoldierCustomer* newScus= new SoldierCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
-    for(int i=0; i<getNumOrders(); i++){
-        newScus->addOrder(getOrdersIds()[i]);
-    }
-    return newScus;
+	SoldierCustomer* newScus= new SoldierCustomer(getId(), getName(), getCustomerDistance(), getMaxOrders());
+	for(int i=0; i<getNumOrders(); i++){
+		newScus->addOrder(getOrdersIds()[i]);
+	}
+	return newScus;
 }
+
 
 CivilianCustomer::CivilianCustomer(int id, const string &name, int locationDistance, int maxOrders)
 	: Customer(id, name, locationDistance, maxOrders) {}

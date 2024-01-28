@@ -22,6 +22,7 @@ class BaseAction{
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
+		virtual ~BaseAction() = default; 
 
     protected:
         void complete();
@@ -38,7 +39,7 @@ class SimulateStep : public BaseAction {
     public:
         SimulateStep(int numOfSteps);
         void act(WareHouse &wareHouse) override;
-		void assignVolunteer(WareHouse &wareHouse);
+		bool assignVolunteer(WareHouse &wareHouse, Order *order); //return true if order was assigned to volunteer
 		void makeTheStep(WareHouse &wareHouse);
         std::string toString() const override;
         SimulateStep *clone() const override;
@@ -77,7 +78,7 @@ class PrintOrderStatus : public BaseAction {
         void act(WareHouse &wareHouse) override;
         PrintOrderStatus *clone() const override;
         string toString() const override;
-		string OrderStatusToString(OrderStatus status) const; //converts OrderStatus to string
+
     private:
         const int orderId;
 };
@@ -114,7 +115,7 @@ class PrintActionsLog : public BaseAction {
 class Close : public BaseAction {
     public:
         Close();
-        void printAll();//new method
+        void printAll(WareHouse &wareHouse);//new method
         void act(WareHouse &wareHouse) override;
         Close *clone() const override;
         string toString() const override;

@@ -1,6 +1,6 @@
 #include "../include/Volunteer.h"
 
-Volunteer::Volunteer(int id, const string &name) : id(id), name(name), completedOrderId(NO_ORDER), activeOrderId(NO_ORDER) {}
+Volunteer::Volunteer(int id, const string &name) : completedOrderId(NO_ORDER), activeOrderId(NO_ORDER), id(id), name(name) {}
 
 int Volunteer::getId() const{
     return id;
@@ -73,6 +73,7 @@ bool CollectorVolunteer::canTakeOrder(const Order &order) const{
 void CollectorVolunteer::acceptOrder(const Order &order){
     activeOrderId = order.getId();
     timeLeft = coolDown;
+
 }
 
 bool CollectorVolunteer::isCollector() const{
@@ -82,6 +83,7 @@ bool CollectorVolunteer::isCollector() const{
 bool CollectorVolunteer::isLimited() const{
 	return false;
 }
+
 string CollectorVolunteer::toString() const{ //get ready for printVolunteerStatus function ???
     return "Collector Volunteer: " + getName() +" id " + std::to_string(getId());
 }
