@@ -32,10 +32,10 @@ WareHouse::WareHouse(const string &configFilePath)
             int distance, maxOrders;
             iss >> name >> customerType >> distance >> maxOrders;
             if(customerType=="Civilian"){
-                customers.push_back(&CivilianCustomer(customerCounter,name, distance, maxOrders));
+                customers.push_back(new CivilianCustomer(customerCounter,name, distance, maxOrders));
             }
             else{
-                customers.push_back(&SoldierCustomer(customerCounter,name, distance, maxOrders));
+                customers.push_back(new SoldierCustomer(customerCounter,name, distance, maxOrders));
             }
             customerCounter++;
         }
@@ -47,22 +47,22 @@ WareHouse::WareHouse(const string &configFilePath)
             if (volunteerRole == "collector")
             {
                 iss >> cooldown;
-                volunteers.push_back(&CollectorVolunteer(volunteerCounter, name, cooldown));
+                volunteers.push_back(new CollectorVolunteer(volunteerCounter, name, cooldown));
             }
             else if (volunteerRole == "limited_collector")
             {
                 iss >> cooldown >> maxOrders;
-                volunteers.push_back(&LimitedCollectorVolunteer(volunteerCounter, name, cooldown, maxOrders));
+                volunteers.push_back(new LimitedCollectorVolunteer(volunteerCounter, name, cooldown, maxOrders));
             }
             else if (volunteerRole == "driver")
             {
                 iss >> maxDistance >> distancePerStep;
-                volunteers.push_back(&DriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep));
+                volunteers.push_back(new DriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep));
             }
             else if (volunteerRole == "limited_driver")
             {
                 iss >> maxDistance >> distancePerStep >> maxOrders;
-                volunteers.push_back(&LimitedDriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep, maxOrders));
+                volunteers.push_back(new LimitedDriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep, maxOrders));
             }
 
             volunteerCounter++;
@@ -181,7 +181,7 @@ void WareHouse::addCustomer(Customer* customer){
 
 
 Customer &WareHouse::getCustomer(int customerId) const{ 
-    if (customerId == -1 || customerId>=customers.size())
+    if (customerId == -1 || customerId>=(customers.size()))
 		return *dummy_Customer;
 	return *customers[customerId];
 }
@@ -270,25 +270,27 @@ void WareHouse::deleteAll(){
     isOpen=false;
 }
 
-void WareHouse::deleteInProcessOrder(int orderid){
-    for (int i = 0; i < inProcessOrders.size(); ++i){
-        Order *order = inProcessOrders[i];
+void WareHouse::deleteInProcessOrder(int orderid){ //chaged to iterator
+    int counter=0;
+    for(vector<Order*>::iterator it = pendingOrders.begin(); it != pendingOrders.end(); it++){
+        Order *order = *it;
         if (order->getId() == orderid){
             delete order;
-            inProcessOrders.erase(inProcessOrders.begin() + i);
-            return;
+            pendingOrders.erase(pendingOrders.begin() + counter);// Move the order from pendingOrders to inProcessOrders
         }
+        counter++;
     }
 }
 
-void WareHouse::deleteVolunteer(int volunteerId){
-    for (int i = 0; i < volunteers.size(); ++i){
-        Volunteer *volunteer = volunteers[i];
+void WareHouse::deleteVolunteer(int volunteerId){ //chaged to iterator
+    int counter=0;
+    for(vector<Volunteer*>::iterator it = volunteers.begin(); it != volunteers.end(); it++){
+        Volunteer *volunteer = *it;
         if (volunteer->getId() == volunteerId){
             delete volunteer;
-            volunteers.erase(volunteers.begin() + i);
-            return;
+            volunteers.erase(volunteers.begin() + counter);// Move the order from pendingOrders to inProcessOrders
         }
+        counter++;
     }
 }
 
@@ -297,8 +299,7 @@ void WareHouse::deleteVolunteer(int volunteerId){
     deleteAll();
  }
 
-WareHouse::WareHouse(const WareHouse &other) //copy constructor
-	: isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){
+WareHouse::WareHouse(const WareHouse &other): {
    
     isOpen = other.isOpen;
     customerCounter = other.customerCounter;
@@ -323,7 +324,7 @@ WareHouse::WareHouse(const WareHouse &other) //copy constructor
     for(auto customer:other.customers){
         customers.push_back(customer->clone());
     }
-}
+} //copy constructor
 
 WareHouse &WareHouse::operator=(const WareHouse &other){ //copy assignment operator
     if(this!=&other){
@@ -389,9 +390,7 @@ WareHouse &WareHouse::operator=(WareHouse &&other){ //move assignment operator
     return *this;
 }
 
-WareHouse::WareHouse(WareHouse &&other) //move constructor
-
-	: isOpen(other.isOpen),actionsLog(),volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),customers(),customerCounter(other.customerCounter),volunteerCounter(other.volunteerCounter),orderCounter(other.orderCounter){
+WareHouse::WareHouse(WareHouse &&other){ //move constructor
 	
 	isOpen = other.isOpen;
 	customerCounter = other.customerCounter;
@@ -404,4 +403,6 @@ WareHouse::WareHouse(WareHouse &&other) //move constructor
 	inProcessOrders = std::move(other.inProcessOrders);
 	completedOrders = std::move(other.completedOrders);
 	customers = std::move(other.customers);
+
+    delete other;
 }
