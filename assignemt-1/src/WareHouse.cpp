@@ -10,10 +10,9 @@ using namespace std;
 
 
 WareHouse::WareHouse(const string &configFilePath) 
-	: isOpen(true), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), 
-	customerCounter(0), volunteerCounter(0), 
-	dummy_volunteer(-1, "dummy", 0), dummy_Customer(-1, "dummy", 0, 0), dummy_Order(-1, 0, 0)
-{
+	: dummy_volunteer(CollectorVolunteer(-1, "dummy", 0)), dummy_Customer(CivilianCustomer(-1, "dummy", 0, 0)), dummy_Order(Order(-1, 0, 0)),
+     isOpen(true), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), 
+	customerCounter(0), volunteerCounter(0), orderCounter(0){
     ifstream configFile(configFilePath);
     string line;
 
@@ -176,6 +175,7 @@ void WareHouse::addCustomer(Customer* customer){
     customerCounter++;
 }; //new method that adds a customer to the warehouse
 
+<<<<<<< HEAD
 Customer& WareHouse::getCustomer(int customerId) const{ 
     if (customerId == -1 || customerId>=(customers.size()))
 		return *dummy_Customer;
@@ -185,12 +185,27 @@ Customer& WareHouse::getCustomer(int customerId) const{
 Volunteer &WareHouse::getVolunteer(int volunteerId) const{
     if (volunteerId == -1 || volunteerId>=volunteers.size())
 		return dummy_Volunteer;
+=======
+
+Customer &WareHouse::getCustomer(int customerId) const{ //dummy problem
+    const CivilianCustomer & refDummy = dummy_Customer;
+    int size = customers.size();
+    if (customerId == -1 || customerId>=size)
+		return refDummy;
+	return *customers[customerId];
+}
+
+Volunteer &WareHouse::getVolunteer(int volunteerId) const{ //dummy problem
+    int size = volunteers.size();
+    if (volunteerId == -1 || volunteerId>=size)
+		return dummy_volunteer;
+>>>>>>> c8197247b92928b03d237e8b113178beae20cc7e
 	return *volunteers[volunteerId];
 }
 
-Order &WareHouse::getOrder(int orderId) const{
+Order &WareHouse::getOrder(int orderId) const{  //dummy problem
 	if(orderId==-1 || orderId>=orderCounter){
-		return *dummy_Order;
+		return dummy_Order;
 	}
 	else{
     	for(auto order:pendingOrders){
@@ -305,31 +320,12 @@ void WareHouse::deleteVolunteer(int volunteerId){ //chaged to iterator
     deleteAll();
  }
 
-WareHouse::WareHouse(const WareHouse &other){
-    isOpen = other.isOpen;
-    customerCounter = other.customerCounter;
-    volunteerCounter = other.volunteerCounter;
-	orderCounter = other.orderCounter;
-	
-	for(auto action:other.actionsLog){
-        actionsLog.push_back(action->clone());
-    }
-    for(auto volunteer:other.volunteers){
-        volunteers.push_back(volunteer->clone());
-    }
-    for(auto pendingOrder:other.pendingOrders){
-        pendingOrders.push_back(pendingOrder->clone());
-    }
-    for(auto inProcessOrder:other.inProcessOrders){
-        inProcessOrders.push_back(inProcessOrder->clone());
-    }
-    for(auto completedOrder:other.completedOrders){
-        completedOrders.push_back(completedOrder->clone());
-    }
-    for(auto customer:other.customers){
-        customers.push_back(customer->clone());
-    }
-}
+WareHouse::WareHouse(const WareHouse &other): 
+    dummy_volunteer(CollectorVolunteer(-1, "dummy", 0)), dummy_Customer(CivilianCustomer(-1, "dummy", 0, 0)), dummy_Order(Order(-1, 0, 0)),
+     isOpen(other.isOpen), actionsLog(other.actionsLog), volunteers(other.volunteers), 
+     pendingOrders(other.pendingOrders), inProcessOrders(other.inProcessOrders), completedOrders(other.completedOrders),
+     customers(other.customers), customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter){
+}//all the members are initialized in the initialization list
 
 WareHouse &WareHouse::operator=(const WareHouse &other){ //copy assignment operator
     if(this!=&other){
@@ -382,7 +378,8 @@ WareHouse &WareHouse::operator=(WareHouse &&other){ //move assignment operator
 }
 
 WareHouse::WareHouse(WareHouse &&other)
-    : isOpen(other.isOpen), 
+    : dummy_volunteer(other.dummy_volunteer), dummy_Customer(other.dummy_Customer), dummy_Order(other.dummy_Order),
+      isOpen(other.isOpen), 
       actionsLog(std::move(other.actionsLog)),
       volunteers(std::move(other.volunteers)), 
       pendingOrders(std::move(other.pendingOrders)), 

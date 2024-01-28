@@ -26,10 +26,7 @@ class WareHouse {
         void close();
         void open();
 
-		CollectorVolunteer dummy_volunteer;
-		CivilianCustomer dummy_Customer;
-		Order dummy_Order;
-        
+
 		//new methods
 		void getUserCommand(); //assist start() method
 		int getCustomerCounter();
@@ -54,6 +51,10 @@ class WareHouse {
         WareHouse&operator=(WareHouse &&other); //move assignment operator
         WareHouse(WareHouse &&other);////move constructor
 
+        CollectorVolunteer dummy_volunteer;
+		CivilianCustomer dummy_Customer;
+		Order dummy_Order; 
+
     private:
         bool isOpen;
         vector<BaseAction*> actionsLog;
@@ -65,4 +66,6 @@ class WareHouse {
         int customerCounter=0; //For assigning unique customer IDs
         int volunteerCounter=0; //For assigning unique volunteer IDs
         int orderCounter=0; //For assigning unique order IDs, new field
+
+        
 };
