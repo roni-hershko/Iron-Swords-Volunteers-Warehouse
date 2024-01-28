@@ -1,9 +1,6 @@
 #include <fstream>
 #include <sstream>
 #include "../include/WareHouse.h"
-#include "../include/Customer.h"
-#include "../include/Volunteer.h"
-#include "../include/Order.h"
 #include "../include/Action.h"
 #include <string>
 #include <vector>
@@ -179,8 +176,7 @@ void WareHouse::addCustomer(Customer* customer){
     customerCounter++;
 }; //new method that adds a customer to the warehouse
 
-
-Customer &WareHouse::getCustomer(int customerId) const{ 
+Customer& WareHouse::getCustomer(int customerId) const{ 
     if (customerId == -1 || customerId>=(customers.size()))
 		return *dummy_Customer;
 	return *customers[customerId];
@@ -188,7 +184,7 @@ Customer &WareHouse::getCustomer(int customerId) const{
 
 Volunteer &WareHouse::getVolunteer(int volunteerId) const{
     if (volunteerId == -1 || volunteerId>=volunteers.size())
-		return *dummy_Volunteer;
+		return dummy_Volunteer;
 	return *volunteers[volunteerId];
 }
 
@@ -260,14 +256,24 @@ int WareHouse::getOrderCounter(){
 }
 
 void WareHouse::deleteAll(){ 
-
-    actionsLog.clear();
-    volunteers.clear();
-    pendingOrders.clear();
-    inProcessOrders.clear();
-    completedOrders.clear();
-    customers.clear();
-    isOpen=false;
+	for(auto action : actionsLog)
+		delete action;
+	actionsLog.clear();
+	for(auto volunteer : volunteers)
+		delete volunteer;
+	volunteers.clear();	
+	for(auto pendingOrder : pendingOrders)
+		delete pendingOrder;
+	pendingOrders.clear();	
+	for(auto inProcessOrder : inProcessOrders)
+		delete inProcessOrder;
+	inProcessOrders.clear();	
+	for(auto completedOrder : completedOrders)
+		delete completedOrder;
+	completedOrders.clear();	
+	for(auto customer : customers)	
+		delete customer;
+	customers.clear();	
 }
 
 void WareHouse::deleteInProcessOrder(int orderid){ //chaged to iterator
@@ -332,13 +338,7 @@ WareHouse &WareHouse::operator=(const WareHouse &other){ //copy assignment opera
         volunteerCounter=other.volunteerCounter;
         orderCounter=other.orderCounter;
 
-        //delete
-        actionsLog.clear();
-        volunteers.clear();
-        pendingOrders.clear();
-        inProcessOrders.clear();
-        completedOrders.clear();
-        customers.clear();
+		deleteAll();
 
         //copy
         for(auto action:other.actionsLog){
@@ -369,14 +369,6 @@ WareHouse &WareHouse::operator=(WareHouse &&other){ //move assignment operator
         customerCounter=other.customerCounter;
         volunteerCounter=other.volunteerCounter;
         orderCounter=other.orderCounter;
-
-        //delete
-        actionsLog.clear();
-        volunteers.clear();
-        pendingOrders.clear();
-        inProcessOrders.clear();
-        completedOrders.clear();
-        customers.clear();
 
 		//move
 		actionsLog = std::move(other.actionsLog);
