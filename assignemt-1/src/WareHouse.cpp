@@ -299,8 +299,7 @@ void WareHouse::deleteVolunteer(int volunteerId){ //chaged to iterator
     deleteAll();
  }
 
-WareHouse::WareHouse(const WareHouse &other): {
-   
+WareHouse::WareHouse(const WareHouse &other){
     isOpen = other.isOpen;
     customerCounter = other.customerCounter;
     volunteerCounter = other.volunteerCounter;
@@ -324,7 +323,7 @@ WareHouse::WareHouse(const WareHouse &other): {
     for(auto customer:other.customers){
         customers.push_back(customer->clone());
     }
-} //copy constructor
+}
 
 WareHouse &WareHouse::operator=(const WareHouse &other){ //copy assignment operator
     if(this!=&other){
@@ -390,19 +389,16 @@ WareHouse &WareHouse::operator=(WareHouse &&other){ //move assignment operator
     return *this;
 }
 
-WareHouse::WareHouse(WareHouse &&other){ //move constructor
-	
-	isOpen = other.isOpen;
-	customerCounter = other.customerCounter;
-	volunteerCounter = other.volunteerCounter;
-	orderCounter = other.orderCounter;
-
-	actionsLog = std::move(other.actionsLog);
-	volunteers = std::move(other.volunteers);
-	pendingOrders = std::move(other.pendingOrders);
-	inProcessOrders = std::move(other.inProcessOrders);
-	completedOrders = std::move(other.completedOrders);
-	customers = std::move(other.customers);
-
-    delete other;
-}
+WareHouse::WareHouse(WareHouse &&other)
+    : isOpen(other.isOpen), 
+      actionsLog(std::move(other.actionsLog)),
+      volunteers(std::move(other.volunteers)), 
+      pendingOrders(std::move(other.pendingOrders)), 
+      inProcessOrders(std::move(other.inProcessOrders)), 
+      completedOrders(std::move(other.completedOrders)), 
+      customers(std::move(other.customers)) { //move constructorr
+    customerCounter = other.customerCounter;
+    volunteerCounter = other.volunteerCounter;
+    orderCounter = other.orderCounter;
+    
+} //need to delete the other warehouse!
