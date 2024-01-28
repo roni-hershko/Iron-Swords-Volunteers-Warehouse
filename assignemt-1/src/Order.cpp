@@ -42,7 +42,7 @@ OrderStatus Order::getStatus() const {
 const string Order::toString() const { 
 
     string statusString;
-    OrderStatus status; 
+    OrderStatus status = OrderStatus::PENDING; //new line
 	string collector;
 	string driver;
 
@@ -78,5 +78,15 @@ const string Order::toString() const {
 
 Order *Order::clone() const{
     return new Order(*this);
+} // new method
+
+string Order::OrderStatusToString() const{
+    if(status == OrderStatus::PENDING)
+        return "PENDING";
+    if(status == OrderStatus::COLLECTING)
+        return "COLLECTING";
+    if(status == OrderStatus::DELIVERING)
+        return "DELIVERING";
+    return "COMPLETED";
 } // new method
 
