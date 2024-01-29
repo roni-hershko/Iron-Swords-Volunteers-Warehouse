@@ -259,9 +259,9 @@ int WareHouse::getOrderCounter(){
 
 void WareHouse::deleteAll(){ 
 
-    dummy_volunteer = nullptr;	
-    dummy_Customer = nullptr;
-    dummy_Order = nullptr;
+    delete dummy_volunteer;	
+    delete dummy_Customer;
+    delete dummy_Order;
 
 	for(auto action : actionsLog)
 		delete action;

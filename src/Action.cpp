@@ -31,6 +31,7 @@ void BaseAction::complete(){
 void BaseAction::error(string errorMsg){
     status=ActionStatus::ERROR;
     this->errorMsg=errorMsg;
+	cout<<errorMsg<<endl;
 }//change status to error, and print
 
 string BaseAction::getErrorMsg() const{ 
