@@ -42,7 +42,6 @@ class WareHouse {
 		void deleteVolunteer(int volunteerId);
 		void deleteInProcessOrder(int orderid);
         void deleteAll(); //deletes all the objects in the warehouse
-
         
 		//rule of 5
 		~WareHouse();//destructor

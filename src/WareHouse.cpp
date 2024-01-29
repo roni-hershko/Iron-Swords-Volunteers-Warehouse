@@ -13,9 +13,14 @@ WareHouse::WareHouse(const string &configFilePath)
 	: dummy_volunteer(new CollectorVolunteer(-1, "dummy", 0)), dummy_Customer(new CivilianCustomer(-1, "dummy", 0, 0)), dummy_Order(new Order(-1, 0, 0)),
      isOpen(true), actionsLog(), volunteers(), pendingOrders(), inProcessOrders(), completedOrders(), customers(), 
 	customerCounter(0), volunteerCounter(0), orderCounter(0){
+    
     ifstream configFile(configFilePath);
-    string line;
 
+    if(!configFile.is_open()){
+        cout << "Error opening the config file" << endl;
+    }
+
+    string line;
     while (getline(configFile, line))
     {
         istringstream iss(line);
@@ -34,6 +39,7 @@ WareHouse::WareHouse(const string &configFilePath)
                 customers.push_back(new SoldierCustomer(customerCounter,name, distance, maxOrders));
             }
             customerCounter++;
+            cout << "Customer " << name << " was added successfully" << endl;
         }
         else if (type == "volunteer")
         {
@@ -66,6 +72,7 @@ WareHouse::WareHouse(const string &configFilePath)
     }
 }
 
+
 void WareHouse::start(){ 
 	open();
     cout << "Warehouse is open!" << endl;
@@ -74,10 +81,10 @@ void WareHouse::start(){
 
 void WareHouse::getUserCommand(){
 
-    string commend;
+    string command;
     while(isOpen){
-        std::getline(std::cin, commend);
-        std::istringstream iss(commend);
+        std::getline(std::cin, command);
+        std::istringstream iss(command);
 
         std::vector<string> words;
         string word;

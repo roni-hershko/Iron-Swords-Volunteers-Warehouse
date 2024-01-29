@@ -1,5 +1,5 @@
 {
-    "tasks": [
+        "tasks": [
         {
             "type": "shell",
             "label": "build",
