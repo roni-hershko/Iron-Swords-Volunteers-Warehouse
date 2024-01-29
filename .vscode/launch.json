@@ -5,12 +5,12 @@
             "name": "C++ Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/workspaces/ubuntu-3/assignemt-1/bin/warehouse",
-            "args": ["/workspaces/ubuntu-3/assignemt-1/configFileExample.txt"],
-            "stopAtEntry": false,
+            "program": "${workspaceFolder}/bin/warehouse",
+            "args": ["${workspaceFolder}/configFileExample.txt"],
+            "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "preLaunchTask": "build"
         }

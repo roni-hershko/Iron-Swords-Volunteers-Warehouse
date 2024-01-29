@@ -1,4 +1,4 @@
-CXX = g++
+CXX = g++ -g
 CXXFLAGS = -std=c++11 -Wall
 SRC_DIR = src
 BIN_DIR = bin
@@ -11,7 +11,7 @@ SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BIN_DIR)/%.o, $(SRCS))
 
 # Targets
-all: $(BIN_DIR)/$(EXECUTABLE)
+all: clean $(BIN_DIR)/$(EXECUTABLE)
 
 $(BIN_DIR)/$(EXECUTABLE): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $@
@@ -23,4 +23,4 @@ $(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
 clean:
 	rm -rf $(BIN_DIR)
 
-.PHONY: all clean
+.PHONY: all

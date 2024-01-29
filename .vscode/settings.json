@@ -1,4 +1,11 @@
 {
+	"makefile.launchConfigurations": [
+        {
+            "cwd": "./bin",
+            "binaryPath": "./bin/warehouse",
+            "binaryArgs": ["./configFileExample.txt"]
+        }
+    ],
 	"files.associations": {
 		"limits": "cpp",
 		"type_traits": "cpp",
