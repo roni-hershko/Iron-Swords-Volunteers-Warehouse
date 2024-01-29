@@ -51,9 +51,9 @@ class WareHouse {
         WareHouse&operator=(WareHouse &&other); //move assignment operator
         WareHouse(WareHouse &&other);////move constructor
 
-        CollectorVolunteer dummy_volunteer;
-		CivilianCustomer dummy_Customer;
-		Order dummy_Order; 
+        CollectorVolunteer* dummy_volunteer;
+		CivilianCustomer* dummy_Customer;
+		Order* dummy_Order; 
 
     private:
         bool isOpen;
@@ -66,6 +66,4 @@ class WareHouse {
         int customerCounter=0; //For assigning unique customer IDs
         int volunteerCounter=0; //For assigning unique volunteer IDs
         int orderCounter=0; //For assigning unique order IDs, new field
-
-        
 };
