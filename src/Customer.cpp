@@ -29,7 +29,7 @@ int Customer::getNumOrders() const {
 }
     
 bool Customer::canMakeOrder() const {//Returns true if the customer didn't reach max orders
-    if(getNumOrders()<maxOrders)
+    if(getNumOrders() <= maxOrders)
          return true;
     return false;
 } 
