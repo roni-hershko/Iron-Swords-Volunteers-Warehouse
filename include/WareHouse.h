@@ -1,11 +1,17 @@
 #pragma once
 #include <string>
 #include <vector>
+using namespace std;
 #include "../include/Order.h"
 #include "../include/Volunteer.h"
 #include "../include/Customer.h"
-
-
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <iterator>
+#include <cstring>
+#include <algorithm>
 class BaseAction;
 class Volunteer;
 

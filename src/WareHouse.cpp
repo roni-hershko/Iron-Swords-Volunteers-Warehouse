@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include <iostream> 
-#include <sstream>
 using namespace std;
 
 
@@ -20,56 +19,62 @@ WareHouse::WareHouse(const string &configFilePath)
         cout << "Error opening the config file" << endl;
     }
 
-    string line;
-    while (getline(configFile, line))
+    std::string line;
+    while (std::getline(configFile, line))
     {
-        istringstream iss(line);
-        string type;
-        iss >> type;
+         if (line.empty()) {
+        continue;
+        }
+        if (line[0] == '#') {
+        continue;
+        }
 
-        if (type == "customer")
+        std::istringstream iss(line);
+
+		std::vector<std::string> tokens{
+			std::istream_iterator<std::string>{iss},
+			std::istream_iterator<std::string>{}
+		};
+
+
+        if (tokens[0] == "customer")
         {
-            string name, customerType;
-            int distance, maxOrders;
-            iss >> name >> customerType >> distance >> maxOrders;
-            if(customerType=="Civilian"){
-                customers.push_back(new CivilianCustomer(customerCounter,name, distance, maxOrders));
+            if(tokens[2]=="Civilian"){
+                customers.push_back(new CivilianCustomer(customerCounter,tokens[1], std::stoi(tokens[3]), std::stoi(tokens[4])));
             }
             else{
-                customers.push_back(new SoldierCustomer(customerCounter,name, distance, maxOrders));
+                customers.push_back(new SoldierCustomer(customerCounter,tokens[1], std::stoi(tokens[3]), std::stoi(tokens[4])));
             }
             customerCounter++;
-            cout << "Customer " << name << " was added successfully" << endl;
         }
-        else if (type == "volunteer")
+        else 
         {
-            string name, volunteerRole;
-            int cooldown, maxDistance, distancePerStep, maxOrders;
-            iss >> name >> volunteerRole;
-            if (volunteerRole == "collector")
+            if (tokens[2] == "collector")
             {
-                iss >> cooldown;
-                volunteers.push_back(new CollectorVolunteer(volunteerCounter, name, cooldown));
+                volunteers.push_back(new CollectorVolunteer(volunteerCounter, tokens[1], std::stoi(tokens[3])));
             }
-            else if (volunteerRole == "limited_collector")
+            else if (tokens[2] == "limited_collector")
             {
-                iss >> cooldown >> maxOrders;
-                volunteers.push_back(new LimitedCollectorVolunteer(volunteerCounter, name, cooldown, maxOrders));
+                volunteers.push_back(new LimitedCollectorVolunteer(volunteerCounter, tokens[1], std::stoi(tokens[3]), std::stoi(tokens[4])));
             }
-            else if (volunteerRole == "driver")
+            else if (tokens[2] == "driver")
             {
-                iss >> maxDistance >> distancePerStep;
-                volunteers.push_back(new DriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep));
+                volunteers.push_back(new DriverVolunteer(volunteerCounter, tokens[1], std::stoi(tokens[3]), std::stoi(tokens[4])));
             }
-            else if (volunteerRole == "limited_driver")
+            else if (tokens[2] == "limited_driver")
             {
-                iss >> maxDistance >> distancePerStep >> maxOrders;
-                volunteers.push_back(new LimitedDriverVolunteer(volunteerCounter, name, maxDistance, distancePerStep, maxOrders));
+                volunteers.push_back(new LimitedDriverVolunteer(volunteerCounter, tokens[1], std::stoi(tokens[3]), std::stoi(tokens[4]), std::stoi(tokens[5])));
             }
 
             volunteerCounter++;
         }
     }
+	std::cout << to_string(customers[0]->getId()) << customers[0]->getName() << to_string(customers[0]->getCustomerDistance()) << to_string(customers[0]->getMaxOrders()) <<endl;
+	std::cout << to_string(customers[1]->getId()) << customers[1]->getName() << to_string(customers[1]->getCustomerDistance()) << to_string(customers[1]->getMaxOrders()) <<endl;
+	std::cout << volunteers[0]->toString()  << endl;
+	std::cout << volunteers[1]->toString() << endl;
+	std::cout << volunteers[2]->toString() << endl;
+	std::cout << volunteers[3]->toString() << endl;
 }
 
 
@@ -136,8 +141,9 @@ void WareHouse::getUserCommand(){
         }
         else if (words[0] == "log")
         {
-            PrintActionsLog log;
-            log.act(*this);
+            BaseAction* log = new PrintActionsLog();
+            log->act(*this);
+            addAction(log); 
         }
         else if (words[0] == "close")
         {
@@ -165,6 +171,7 @@ void WareHouse::getUserCommand(){
 
 void WareHouse::addOrder(Order* order){ 
 	pendingOrders.push_back(order);
+	std::cout << "Order " << to_string(pendingOrders[orderCounter]->getId())<< " was added successfully" << std::endl;
 	orderCounter++;
 }
 
@@ -194,9 +201,11 @@ Customer &WareHouse::getCustomer(int customerId) const{//mabey memory leak
 Volunteer &WareHouse::getVolunteer(int volunteerId) const{
     CollectorVolunteer &refDummy = *dummy_volunteer;
     int size = volunteers.size();
-    if (volunteerId == -1 || volunteerId>=size)
-		return refDummy;
-	return *volunteers[volunteerId];
+	for( int i = 0; i < size; i++ ){
+		if(volunteers[i]->getId() == volunteerId)
+			return *volunteers[i];
+		}
+	return refDummy;
 }
 
 Order &WareHouse::getOrder(int orderId) const{ 
@@ -212,10 +221,11 @@ Order &WareHouse::getOrder(int orderId) const{
             return *order;
         }
     }
-        for(auto order:completedOrders){
-            if(order->getId()==orderId){
+    for(auto order:completedOrders){
+        if(order->getId()==orderId){
             return *order;
         }
+
     }
     return refDummy;
 }

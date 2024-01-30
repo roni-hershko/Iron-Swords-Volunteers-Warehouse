@@ -22,6 +22,10 @@ bool Volunteer::isBusy() const{
     return activeOrderId != NO_ORDER;
 }
 
+bool Volunteer::isCollector() const{
+	return false;
+}
+
 
 
 //CollectorVolunteer
@@ -33,12 +37,9 @@ CollectorVolunteer *CollectorVolunteer::clone() const {
 }
 
 void CollectorVolunteer::step(){
-    if (timeLeft > 0){
-        timeLeft--;
-        if (timeLeft == 0){
-            completedOrderId = activeOrderId;
-            activeOrderId = NO_ORDER;
-        }
+    if (decreaseCoolDown()) {
+        completedOrderId = activeOrderId;
+        activeOrderId = NO_ORDER;
     }
 }
 
@@ -51,13 +52,9 @@ int CollectorVolunteer::getTimeLeft() const{
 }
 
 bool CollectorVolunteer::decreaseCoolDown(){
-    if (timeLeft > 0){
+     if (timeLeft > 0) {
         timeLeft--;
-        if (timeLeft == 0){
-            completedOrderId = activeOrderId;
-            activeOrderId = NO_ORDER;
-        }
-        return true;
+        return timeLeft == 0;
     }
     return false;
 }
@@ -184,9 +181,6 @@ void DriverVolunteer::step(){
     }
 }
 
-bool DriverVolunteer::isCollector() const{
-    return false;
-}
 
 bool DriverVolunteer::isLimited() const{
 	return false;
