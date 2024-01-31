@@ -359,13 +359,13 @@ string PrintVolunteerStatus::toString() const{
 PrintActionsLog::PrintActionsLog(){}//constructor
 
 void PrintActionsLog::act(WareHouse &wareHouse){
-	for (vector<BaseAction*>::const_iterator it = (wareHouse.getActions()).begin(); it != (wareHouse.getActions()).end(); it++) //iterate over the volunteers and there is collector avalible
-		cout<< (*it)->toString()<<endl; 
+	for (const auto& action : wareHouse.getActions()) {
+    	cout << action->toString() << endl;
+	} 
 
 	complete();
     wareHouse.addAction(this);
 } 
-
 
 
 PrintActionsLog *PrintActionsLog::clone() const{
