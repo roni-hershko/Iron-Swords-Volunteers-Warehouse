@@ -12,7 +12,7 @@ using std::vector;
 using namespace std;
 
 //base action
-BaseAction::BaseAction():errorMsg("<error_msg>"),status(ActionStatus::ERROR){}
+BaseAction::BaseAction():errorMsg("<error_msg>"),status(ActionStatus::COMPLETED){}
 
 ActionStatus BaseAction::getStatus() const{
 	return status;
@@ -31,7 +31,7 @@ void BaseAction::complete(){
 void BaseAction::error(string errorMsg){
     status=ActionStatus::ERROR;
     this->errorMsg=errorMsg;
-	cout<<errorMsg<<endl;
+	cout<< "error:" <<errorMsg << endl;
 }//change status to error, and print
 
 string BaseAction::getErrorMsg() const{ 
@@ -43,11 +43,8 @@ string BaseAction::getErrorMsg() const{
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps){} //constructor
 
 void SimulateStep::act(WareHouse &wareHouse){
-	for(int i=0; i<numOfSteps; i++){
+	for(int i=0; i<numOfSteps; i++)
 		makeTheStep(wareHouse);
-	}
-	wareHouse.addAction(this);
-    complete();
 }
 
 void SimulateStep::makeTheStep(WareHouse &wareHouse){
@@ -83,10 +80,10 @@ void SimulateStep::makeTheStep(WareHouse &wareHouse){
 		else if(order->getStatus() == OrderStatus::COLLECTING){ 
             int collectorId = order->getCollectorId();
             CollectorVolunteer &collector = dynamic_cast<CollectorVolunteer&>(wareHouse.getVolunteer(collectorId));
-			cout<<to_string(collector.getTimeLeft())<<endl;
+			cout<<to_string(collector.getTimeLeft())<<endl; ///////////////////////////////////////
             collector.step(); //step the collector
 			// if order has finished collecting move to pendingOrders vector
-			cout<<to_string(collector.getTimeLeft())<<endl;
+			cout<<to_string(collector.getTimeLeft())<<endl; ///////////////////////////////////////
             if (collector.getActiveOrderId() == NO_ORDER) {
 				//no need to change the order status untill the driver will take the order only happen in the next step
 				pendingOrders.push_back(order);
@@ -149,7 +146,7 @@ SimulateStep *SimulateStep::clone() const{
 
 string SimulateStep::toString() const{
 	string stringStatus= ActionStatusToString(getStatus());
-	return "SimulateStep " + std::to_string(numOfSteps) + stringStatus;
+	return "SimulateStep " + std::to_string(numOfSteps) + " " + stringStatus;
 }
 
 
@@ -167,10 +164,8 @@ void AddOrder::act(WareHouse &wareHouse){
         Order* order = new Order(wareHouse.getOrderCounter(), customerId, (wareHouse.getCustomer(customerId)).getCustomerDistance());
 		customer.addOrder(order->getId());
 		wareHouse.addOrder(order);
-        complete();
     }
-    wareHouse.addAction(this);
-} //add order to warehouse, maybe error
+} 
 
 AddOrder *AddOrder::clone() const{
     return new AddOrder(customerId);
@@ -178,7 +173,7 @@ AddOrder *AddOrder::clone() const{
 
 string AddOrder::toString() const{ 
 	string stringStatus= ActionStatusToString(getStatus());
-	return "Order " + std::to_string(customerId) + stringStatus;
+	return "Order " + std::to_string(customerId) + " " + stringStatus;
 }
 
 
@@ -194,9 +189,7 @@ void AddCustomer::act(WareHouse &wareHouse){
     else {
         wareHouse.addCustomer(new SoldierCustomer (customerId,customerName, distance, maxOrders));
     }
-	complete();   
-    wareHouse.addAction(this);
-} //add customer to warehouse, never error
+} 
 
 AddCustomer *AddCustomer::clone() const{
     if(customerType == CustomerType::Civilian){
@@ -209,9 +202,9 @@ string AddCustomer::toString() const{
 	string stringStatus= ActionStatusToString(getStatus());
 
     if(CustomerType(customerType)==CustomerType::Civilian){  
-        return "AddCustomer " + customerName + ", Civilian, distance:" + std::to_string(distance) + ", maxOrder: " + std::to_string(maxOrders) + stringStatus;
+        return "Customer " + customerName + ", Civilian, distance:" + std::to_string(distance) + ", maxOrder: " + std::to_string(maxOrders) + " " + stringStatus;
     }
-    return "Customer: " + customerName + ", Soldier, distance:" + std::to_string(distance) + ", maxOrder: " + std::to_string(maxOrders) + stringStatus;
+    return "Customer: " + customerName + ", Soldier, distance:" + std::to_string(distance) + ", maxOrder: " + std::to_string(maxOrders) + " " + stringStatus;
 }
 
 CustomerType AddCustomer::StringToCustomerType(string customerType){ 
@@ -241,12 +234,10 @@ void PrintOrderStatus::act(WareHouse &wareHouse){
 		if(order.getDriverId()==-1){
 			cout << "Driver: None" << endl;
 		}
-		else{
+		else {
         	cout << "Driver: " + std::to_string(order.getDriverId())<< endl;
 		}
     }
-    complete();
-    wareHouse.addAction(this);
 } 
 
 PrintOrderStatus *PrintOrderStatus::clone() const{
@@ -255,7 +246,7 @@ PrintOrderStatus *PrintOrderStatus::clone() const{
 
 string PrintOrderStatus::toString() const{ 
 	string stringStatus= ActionStatusToString(getStatus());
-    return "OrderStatus " + std::to_string(orderId) + stringStatus;
+    return "OrderStatus " + std::to_string(orderId) + " " + stringStatus;
 }  
 
 
@@ -280,9 +271,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
 		else {
 			cout<<"num order left: 0 "<<endl;
 		}
-		complete();
 	} 
-    wareHouse.addAction(this);
 }
 
 PrintCustomerStatus *PrintCustomerStatus::clone() const {
@@ -340,9 +329,7 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse){
 				cout << "ordersLeft: No Limit" << endl;
 			}
 		}
-		complete();
 	}	
-    wareHouse.addAction(this);
 }
 
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const{
@@ -351,7 +338,7 @@ PrintVolunteerStatus *PrintVolunteerStatus::clone() const{
 
 string PrintVolunteerStatus::toString() const{
 	string stringStatus = ActionStatusToString(getStatus());
-	return "PrintVolunteerStatus" + std::to_string(volunteerId) + stringStatus;
+	return "VolunteerStatus" + std::to_string(volunteerId) + " " + stringStatus;
 }
 
 
@@ -359,14 +346,10 @@ string PrintVolunteerStatus::toString() const{
 PrintActionsLog::PrintActionsLog(){}//constructor
 
 void PrintActionsLog::act(WareHouse &wareHouse){
-	for (const auto& action : wareHouse.getActions()) {
+	vector<BaseAction*> actionsLog = wareHouse.getActions();
+	for (BaseAction* action : actionsLog) 
     	cout << action->toString() << endl;
-	} 
-
-	complete();
-    wareHouse.addAction(this);
 } 
-
 
 PrintActionsLog *PrintActionsLog::clone() const{
 	return new PrintActionsLog(*this);
@@ -406,6 +389,7 @@ Close *Close::clone() const{
 string Close::toString() const{
 	return "close";
 }
+
 
 extern WareHouse* backup;
 //backup warehouse
