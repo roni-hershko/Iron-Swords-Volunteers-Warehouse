@@ -77,124 +77,7 @@ WareHouse::WareHouse(const string &configFilePath)
 	std::cout << volunteers[3]->toString() << endl;
 }
 
-//Rule of 5
- WareHouse::~WareHouse(){ //destructor
-    deleteAll();
- }
 
-WareHouse::WareHouse(const WareHouse &other): //copy constructor
-    dummy_volunteer(other.dummy_volunteer->clone()), dummy_Customer(other.dummy_Customer->clone()), dummy_Order(other.dummy_Order->clone()),
-    isOpen(other.isOpen),actionsLog(), volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),  //copy constructor
-     customers(),customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter){
-    
-    for (size_t i = 0; i < other.pendingOrders.size(); ++i){
-        Order *order = other.pendingOrders[i];
-        pendingOrders.push_back(order->clone());
-    }
-
-    for (size_t i = 0; i < other.inProcessOrders.size(); ++i){
-        Order *order = other.inProcessOrders[i];
-        inProcessOrders.push_back(order->clone());
-    }
-
-    for (size_t i = 0; i < other.completedOrders.size(); ++i){
-        Order *order = other.completedOrders[i];
-        completedOrders.push_back(order->clone());
-    }
-
-    for (size_t i = 0; i < other.volunteers.size(); ++i){
-        Volunteer *volunteer = other.volunteers[i];
-        volunteers.push_back(volunteer->clone());
-    }
-
-    for (size_t i = 0; i < other.customers.size(); ++i){
-        Customer *customer = other.customers[i];
-        customers.push_back(customer->clone());
-    }
-
-    for (size_t i = 0; i < other.actionsLog.size(); ++i){
-        BaseAction *action = other.actionsLog[i];
-        actionsLog.push_back(action->clone());
-    }
-}
-
-WareHouse &WareHouse::operator=(const WareHouse &other){ //copy assignment operator
-    if(this!=&other){
-        deleteAll();
-
-        isOpen=other.isOpen;
-        customerCounter=other.customerCounter;
-        volunteerCounter=other.volunteerCounter;
-        orderCounter=other.orderCounter;
-
-        dummy_volunteer=other.dummy_volunteer->clone();
-        dummy_Customer=other.dummy_Customer->clone();
-        dummy_Order=other.dummy_Order->clone();
-        
-        for(auto action:other.actionsLog){
-            actionsLog.push_back(action->clone());
-        }
-        for(auto volunteer:other.volunteers){
-            volunteers.push_back(volunteer->clone());
-        }
-        for(auto pendingOrder:other.pendingOrders){
-            pendingOrders.push_back(pendingOrder->clone());
-        }
-        for(auto inProcessOrder:other.inProcessOrders){
-            inProcessOrders.push_back(inProcessOrder->clone());
-        }
-        for(auto completedOrder:other.completedOrders){
-            completedOrders.push_back(completedOrder->clone());
-        }
-        for(auto customer:other.customers){
-            customers.push_back(customer->clone());
-        }
-    }
-    return *this;
-}
-
-WareHouse &WareHouse::operator=(WareHouse &&other){ //move assignment operator
-    if(this!=&other){
-        deleteAll();
-
-        isOpen=other.isOpen;
-        customerCounter=other.customerCounter;
-        volunteerCounter=other.volunteerCounter;
-        orderCounter=other.orderCounter;
-
-		//move
-        dummy_volunteer=std::move(other.dummy_volunteer);
-        dummy_Customer=std::move(other.dummy_Customer);
-        dummy_Order=std::move(other.dummy_Order);
-		actionsLog = std::move(other.actionsLog);
-		volunteers = std::move(other.volunteers);
-		pendingOrders = std::move(other.pendingOrders);
-		inProcessOrders = std::move(other.inProcessOrders);
-		completedOrders = std::move(other.completedOrders);
-		customers = std::move(other.customers);
-    }
-    return *this;
-}
-
-WareHouse::WareHouse(WareHouse &&other) //move constructor
-    : dummy_volunteer(other.dummy_volunteer), dummy_Customer(other.dummy_Customer), dummy_Order(other.dummy_Order),
-      isOpen(other.isOpen), 
-      actionsLog(std::move(other.actionsLog)),
-      volunteers(std::move(other.volunteers)), 
-      pendingOrders(std::move(other.pendingOrders)), 
-      inProcessOrders(std::move(other.inProcessOrders)), 
-      completedOrders(std::move(other.completedOrders)), 
-      customers(std::move(other.customers)) {
-        
-    customerCounter = other.customerCounter;
-    volunteerCounter = other.volunteerCounter;
-    orderCounter = other.orderCounter;
-    other.dummy_volunteer = nullptr;
-    other.dummy_Customer = nullptr;
-    other.dummy_Order = nullptr;
-} //need to delete the other warehouse!
-
-//methods
 void WareHouse::start(){ 
 	open();
     cout << "Warehouse is open!" << endl;
@@ -223,74 +106,66 @@ void WareHouse::getUserCommand(){
             int distance = std::stoi(words[3]);
             int maxOrders = std::stoi(words[4]);
 
-            AddCustomer *newCustomer= new AddCustomer(customerName, customerType, distance, maxOrders);
-            newCustomer->act(*this);
-			addAction(newCustomer);
+            AddCustomer newCustomer(customerName, customerType, distance, maxOrders);
+            newCustomer.act(*this);
         }
         else if (words[0] == "order" && words.size() >= 2)
         {
             int customerId = std::stoi(words[1]);
-            AddOrder *newOrder = new AddOrder(customerId);
-            newOrder->act(*this);
-			addAction(newOrder);
+            AddOrder newOrder(customerId);
+            newOrder.act(*this);
         }
         else if (words[0] == "step" && words.size() >= 2)
         {
             int numOfStep = std::stoi(words[1]);
-            SimulateStep *step= new SimulateStep(numOfStep);
-            step->act(*this);
-			addAction(step);
+            SimulateStep simStep(numOfStep);
+            simStep.act(*this);
         }
         else if (words[0] == "orderStatus" && words.size() >= 2)
         {
             int orderId = std::stoi(words[1]);
-            PrintOrderStatus *orderStatus = new PrintOrderStatus(orderId);
-            orderStatus->act(*this);
-			addAction(orderStatus);
-
+            PrintOrderStatus orderStatus(orderId);
+            orderStatus.act(*this);
         }
         else if (words[0] == "customerStatus" && words.size() >= 2)
         {
             int customerId = std::stoi(words[1]);
-            PrintCustomerStatus *customerStatus= new PrintCustomerStatus(customerId);
-            customerStatus->act(*this);
-			addAction(customerStatus);
+            PrintCustomerStatus customerStatus(customerId);
+            customerStatus.act(*this);
         }
         else if (words[0] == "volunteerStatus" && words.size() >= 2)
         {
             int volunteerId = std::stoi(words[1]);
-            PrintVolunteerStatus *volunteerStatus = new PrintVolunteerStatus(volunteerId);
-            volunteerStatus->act(*this);
-			addAction(volunteerStatus);
+            PrintVolunteerStatus volunteerStatus(volunteerId);
+            volunteerStatus.act(*this);
         }
         else if (words[0] == "log")
         {
-            PrintActionsLog* log = new PrintActionsLog();
+            BaseAction* log = new PrintActionsLog();
             log->act(*this);
             addAction(log); 
         }
         else if (words[0] == "close")
         {
-            Close *close = new Close();
-            close->act(*this);
-			addAction(close);
+            Close close;
+            close.act(*this);
         }
         else if (words[0] == "backup")
         {
-            BackupWareHouse *backup = new BackupWareHouse();
-			addAction(backup);
-            backup->act(*this);
+            BackupWareHouse backup;
+            backup.act(*this);
         }
         else if (words[0] == "restore")
         {
-            RestoreWareHouse *restore = new RestoreWareHouse();
-            restore->act(*this);
-			addAction(restore);
+            RestoreWareHouse restore;
+            restore.act(*this);
         }
         else
         {
             std::cout << "error: not a valid command" << std::endl;
+            ;
         }
+
     }
  }
 
@@ -313,6 +188,7 @@ void WareHouse::addCustomer(Customer* customer){
     customers.push_back(customer);
     customerCounter++;
 }; //new method that adds a customer to the warehouse
+
 
 Customer &WareHouse::getCustomer(int customerId) const{//mabey memory leak
     CivilianCustomer &refDummy = *dummy_Customer;
@@ -448,3 +324,125 @@ void WareHouse::deleteVolunteer(int volunteerId){ //chaged to iterator
     }
 }
 
+//Rule of 5
+ WareHouse::~WareHouse(){ //destructor
+    deleteAll();
+ }
+
+WareHouse::WareHouse(const WareHouse &other): 
+    dummy_volunteer(other.dummy_volunteer->clone()), dummy_Customer(other.dummy_Customer->clone()), dummy_Order(other.dummy_Order->clone()),
+    isOpen(other.isOpen),actionsLog(), volunteers(),pendingOrders(),inProcessOrders(),completedOrders(),  
+     customers(),customerCounter(other.customerCounter), volunteerCounter(other.volunteerCounter), orderCounter(other.orderCounter){ //copy constructor
+    
+    for (size_t i = 0; i < other.pendingOrders.size(); ++i)
+    {
+        Order *order = other.pendingOrders[i];
+        pendingOrders.push_back(order->clone());
+    }
+
+    for (size_t i = 0; i < other.inProcessOrders.size(); ++i)
+    {
+        Order *order = other.inProcessOrders[i];
+        inProcessOrders.push_back(order->clone());
+    }
+
+    for (size_t i = 0; i < other.completedOrders.size(); ++i)
+    {
+        Order *order = other.completedOrders[i];
+        completedOrders.push_back(order->clone());
+    }
+
+    for (size_t i = 0; i < other.volunteers.size(); ++i)
+    {
+        Volunteer *volunteer = other.volunteers[i];
+        volunteers.push_back(volunteer->clone());
+    }
+
+    for (size_t i = 0; i < other.customers.size(); ++i)
+    {
+        Customer *customer = other.customers[i];
+        customers.push_back(customer->clone());
+    }
+
+    for (size_t i = 0; i < other.actionsLog.size(); ++i)
+    {
+        BaseAction *action = other.actionsLog[i];
+        actionsLog.push_back(action->clone());
+    }
+}
+
+WareHouse &WareHouse::operator=(const WareHouse &other){ //copy assignment operator
+    if(this!=&other){
+        WareHouse::deleteAll();
+
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+
+        dummy_volunteer=other.dummy_volunteer->clone();
+        dummy_Customer=other.dummy_Customer->clone();
+        dummy_Order=other.dummy_Order->clone();
+        
+        for(auto action:other.actionsLog){
+            actionsLog.push_back(action->clone());
+        }
+        for(auto volunteer:other.volunteers){
+            volunteers.push_back(volunteer->clone());
+        }
+        for(auto pendingOrder:other.pendingOrders){
+            pendingOrders.push_back(pendingOrder->clone());
+        }
+        for(auto inProcessOrder:other.inProcessOrders){
+            inProcessOrders.push_back(inProcessOrder->clone());
+        }
+        for(auto completedOrder:other.completedOrders){
+            completedOrders.push_back(completedOrder->clone());
+        }
+        for(auto customer:other.customers){
+            customers.push_back(customer->clone());
+        }
+    }
+    return *this;
+}
+
+WareHouse &WareHouse::operator=(WareHouse &&other){ //move assignment operator
+    if(this!=&other){
+        deleteAll();
+
+        isOpen=other.isOpen;
+        customerCounter=other.customerCounter;
+        volunteerCounter=other.volunteerCounter;
+        orderCounter=other.orderCounter;
+
+		//move
+        dummy_volunteer=std::move(other.dummy_volunteer);
+        dummy_Customer=std::move(other.dummy_Customer);
+        dummy_Order=std::move(other.dummy_Order);
+		actionsLog = std::move(other.actionsLog);
+		volunteers = std::move(other.volunteers);
+		pendingOrders = std::move(other.pendingOrders);
+		inProcessOrders = std::move(other.inProcessOrders);
+		completedOrders = std::move(other.completedOrders);
+		customers = std::move(other.customers);
+    }
+    return *this;
+}
+
+WareHouse::WareHouse(WareHouse &&other)
+    : dummy_volunteer(other.dummy_volunteer), dummy_Customer(other.dummy_Customer), dummy_Order(other.dummy_Order),
+      isOpen(other.isOpen), 
+      actionsLog(std::move(other.actionsLog)),
+      volunteers(std::move(other.volunteers)), 
+      pendingOrders(std::move(other.pendingOrders)), 
+      inProcessOrders(std::move(other.inProcessOrders)), 
+      completedOrders(std::move(other.completedOrders)), 
+      customers(std::move(other.customers)) {
+        
+    customerCounter = other.customerCounter;
+    volunteerCounter = other.volunteerCounter;
+    orderCounter = other.orderCounter;
+    other.dummy_volunteer = nullptr;
+    other.dummy_Customer = nullptr;
+    other.dummy_Order = nullptr;
+} //need to delete the other warehouse!

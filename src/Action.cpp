@@ -393,7 +393,8 @@ string Close::toString() const{
 
 extern WareHouse* backup;
 //backup warehouse
-BackupWareHouse::BackupWareHouse(){}//constructor
+BackupWareHouse::BackupWareHouse(){
+}//constructor
 
 void BackupWareHouse::act(WareHouse &wareHouse){
     backup= &wareHouse;
