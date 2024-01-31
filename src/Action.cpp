@@ -141,7 +141,7 @@ void SimulateStep::assignVolunteer(WareHouse &wareHouse){
 }
 	
 SimulateStep *SimulateStep::clone() const{
-	return new SimulateStep(numOfSteps);
+	return new SimulateStep(*this);
 }
 
 string SimulateStep::toString() const{
@@ -168,7 +168,7 @@ void AddOrder::act(WareHouse &wareHouse){
 } 
 
 AddOrder *AddOrder::clone() const{
-    return new AddOrder(customerId);
+    return new AddOrder(*this);
 }
 
 string AddOrder::toString() const{ 
@@ -192,10 +192,7 @@ void AddCustomer::act(WareHouse &wareHouse){
 } 
 
 AddCustomer *AddCustomer::clone() const{
-    if(customerType == CustomerType::Civilian){
-       return new AddCustomer(customerName, "Civilian",  distance,  maxOrders);
-    }
-    return new AddCustomer(customerName, "Soldier",  distance,  maxOrders);
+   return new AddCustomer(*this);
 }
 
 string AddCustomer::toString() const{
@@ -241,7 +238,7 @@ void PrintOrderStatus::act(WareHouse &wareHouse){
 } 
 
 PrintOrderStatus *PrintOrderStatus::clone() const{
-    return new PrintOrderStatus(orderId);
+    return new PrintOrderStatus(*this);
 }
 
 string PrintOrderStatus::toString() const{ 
@@ -275,7 +272,7 @@ void PrintCustomerStatus::act(WareHouse &wareHouse){
 }
 
 PrintCustomerStatus *PrintCustomerStatus::clone() const {
-    return new PrintCustomerStatus(customerId);
+    return new PrintCustomerStatus(*this);
 }
 
 string PrintCustomerStatus::toString() const{ 
@@ -291,49 +288,60 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse){
 	
 	Volunteer &volunteer = wareHouse.getVolunteer(volunteerId);
 
-	if(volunteer.getId() == -1){
+	//if the volunteer doesnt exist
+	if(volunteer.getId() == -1)
 		error("Volunteer doesnt exist");
-	}
-
+	
+	//if the volunteer exist
 	else {
 		cout << "VolunteerID:" << std::to_string(volunteerId) << endl; 
-		if(!volunteer.isBusy()){
-			cout << "isBusy: false" << endl;
-			cout << "OrderID: None" << endl; 
-			cout << "timeLeft: None" << endl; 
-			cout << "ordersLeft: None" << endl; 
-		}
-		else if (volunteer.isCollector()){ //if the volunteer is a collector
+
+		//if the volunteer is a collector
+		if (volunteer.isCollector()){ 
 			CollectorVolunteer &collector = dynamic_cast<CollectorVolunteer&>(volunteer);
-			cout << "isBusy: true" << endl; //check if bool can be printed
-			cout << "OrderID: " + std::to_string(volunteer.getActiveOrderId())<< endl; 
-			cout << "timeLeft: " + std::to_string(collector.getTimeLeft()) << endl; 
-			if(collector.isLimited()){
-				LimitedCollectorVolunteer &limitedCollector = dynamic_cast<LimitedCollectorVolunteer&>(volunteer);
-				cout << "ordersLeft: " + std::to_string(limitedCollector.getNumOrdersLeft()) << endl;
+			if(!collector.isBusy()){
+				cout << "isBusy: false" << endl;
+				cout << "OrderID: None" << endl; 	
+				cout << "timeLeft: None" << endl; 
+				cout << "ordersLeft: No Limit" << endl; 
 			}
 			else{
-				cout << "ordersLeft: No Limit" << endl;
+				cout << "isBusy: true" << endl; 
+				cout << "OrderID: " + std::to_string(volunteer.getActiveOrderId())<< endl; 
+				cout << "timeLeft: " + std::to_string(collector.getTimeLeft()) << endl; 
+				if(collector.isLimited()){
+					LimitedCollectorVolunteer &limitedCollector = dynamic_cast<LimitedCollectorVolunteer&>(volunteer);
+					cout << "ordersLeft: " + std::to_string(limitedCollector.getNumOrdersLeft()) << endl;
+				}	
+				else
+					cout << "ordersLeft: No Limit" << endl;
 			}
 		}	
-		else { //if the volunteer is a driver
+		else{ //if the volunteer is a driver
 			DriverVolunteer &driver = dynamic_cast<DriverVolunteer&>(volunteer);
-			cout << "isBusy: true" << endl; //check if bool can be printed
-			cout << "OrderID: " + std::to_string(volunteer.getActiveOrderId())<< endl;
-			cout << "distanceLeft: " + std::to_string(driver.getDistanceLeft()) << endl; 
-			if (driver.isLimited()){
-				LimitedDriverVolunteer &limitedDriver = dynamic_cast<LimitedDriverVolunteer&>(volunteer);
-				cout << "ordersLeft: " + std::to_string(limitedDriver.getNumOrdersLeft()) << endl;
+			if(!driver.isBusy()){
+				cout << "isBusy: false" << endl;
+				cout << "OrderID: None" << endl; 	
+				cout << "timeLeft: None" << endl; 
+				cout << "ordersLeft: No Limit" << endl; 
+			}	
+			else{	
+				cout << "isBusy: true" << endl; //check if bool can be printed
+				cout << "OrderID: " + std::to_string(volunteer.getActiveOrderId())<< endl;
+				cout << "distanceLeft: " + std::to_string(driver.getDistanceLeft()) << endl; 
+				if (driver.isLimited()){
+					LimitedDriverVolunteer &limitedDriver = dynamic_cast<LimitedDriverVolunteer&>(volunteer);
+					cout << "ordersLeft: " + std::to_string(limitedDriver.getNumOrdersLeft()) << endl;
+				}
+				else
+					cout << "ordersLeft: No Limit" << endl;
 			}
-			else{
-				cout << "ordersLeft: No Limit" << endl;
-			}
-		}
-	}	
+		}	
+	}
 }
 
 PrintVolunteerStatus *PrintVolunteerStatus::clone() const{
-	return new PrintVolunteerStatus(volunteerId);
+	return new PrintVolunteerStatus(*this);
 }
 
 string PrintVolunteerStatus::toString() const{
@@ -383,7 +391,7 @@ void Close::printAll(WareHouse &wareHouse){
 }
 
 Close *Close::clone() const{
-	return new Close();
+	return new Close(*this);
 }
 
 string Close::toString() const{
@@ -396,15 +404,18 @@ extern WareHouse* backup;
 BackupWareHouse::BackupWareHouse(){}//constructor
 
 void BackupWareHouse::act(WareHouse &wareHouse){
-    backup= &wareHouse;
-}//copy assignment operator
+    if(backup == nullptr)
+        backup =  new WareHouse(wareHouse);
+    else
+        *backup = wareHouse;
+}//copy constructor
 
 BackupWareHouse *BackupWareHouse::clone() const {
-	return new BackupWareHouse();
+	return new BackupWareHouse(*this);
 }
 
 string BackupWareHouse::toString() const {
-	return "BackupWareHouse";
+	return "BackupWareHouse" + ActionStatusToString(getStatus());
 }
 
 
@@ -419,10 +430,10 @@ else
 }
 
 RestoreWareHouse *RestoreWareHouse::clone() const{
-	return new RestoreWareHouse();
+	return new RestoreWareHouse(*this);
 }
 
 string RestoreWareHouse::toString() const{
-	return "RestoreWareHouse";
+	return "RestoreWareHouse" + ActionStatusToString(getStatus());
 }
 
