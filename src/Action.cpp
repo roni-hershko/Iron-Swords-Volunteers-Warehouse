@@ -43,67 +43,54 @@ string BaseAction::getErrorMsg() const{
 SimulateStep::SimulateStep(int numOfSteps) : numOfSteps(numOfSteps){} //constructor
 
 void SimulateStep::act(WareHouse &wareHouse){
-	for(int i=0; i<numOfSteps; i++)
+	for(int i=0; i<numOfSteps; i++){
+		assignVolunteer(wareHouse);
 		makeTheStep(wareHouse);
+	}
 }
 
 void SimulateStep::makeTheStep(WareHouse &wareHouse){
 	vector<Order*> &pendingOrders = wareHouse.getPendingOrders();
     vector<Order*> &inProcessOrders = wareHouse.getinProcessOrders();
 	vector<Order*> &completedOrders = wareHouse.getCompletedOrders();
-	vector <Volunteer*> &volunteers = wareHouse.getVolunteers();
-	//treat the case of pending orders
-	assignVolunteer(wareHouse);
 	
-	//for(auto volunteer : volunteers){
-	//	if(volunteer->isBusy())
-	//		volunteer->step();
-	//}
-
-
-	int counter=0;
 	//treat the case of orders in process
-	for (Order *order : inProcessOrders){
-		//if the order is collecting
-		if(order->getStatus() == OrderStatus::COLLECTING){ 
-            int collectorId = order->getCollectorId();
-            CollectorVolunteer &collector = dynamic_cast<CollectorVolunteer&>(wareHouse.getVolunteer(collectorId));
+    for (vector<Order *>::size_type i = 0; i < inProcessOrders.size(); i++) {
+		Order *order = inProcessOrders[i];
 
-            collector.step(); //step the collector
-			// if order has finished collecting move to pendingOrders vector
-			cout<<to_string(collector.getTimeLeft())<<endl; ///////////////////////////////////////
-            if (collector.getActiveOrderId() == NO_ORDER) {
-				//no need to change the order status untill the driver will take the order only happen in the next step
-				pendingOrders.push_back(order);
-				inProcessOrders.erase(inProcessOrders.begin() + counter);
-                counter--;
-                
-            }
-			// if the collector is limitedCollector and has no orders left delete the collector
-            if (!collector.hasOrdersLeft()) 
-                wareHouse.deleteVolunteer(collectorId);
-            
-        }
 		// if the order is delivering
-		else if (order->getStatus() == OrderStatus::DELIVERING){
+		if (order->getStatus() == OrderStatus::DELIVERING){
+			cout <<to_string(order->getId()) + " DELIVERING "<< endl; //print to delete
 			int driverId = order->getDriverId();
-			//the volunteer is a driver
 			DriverVolunteer &driver = dynamic_cast<DriverVolunteer&> (wareHouse.getVolunteer(driverId));
 			driver.step();
-			// if the order has finished delivering move to completedOrders vector
-			//cout << order->OrderStatusToString() << endl;
 			if (driver.getActiveOrderId() == NO_ORDER){
 				order->setStatus(OrderStatus::COMPLETED);
-				//cout << order->OrderStatusToString() << endl;
 				completedOrders.push_back(order);
-				inProcessOrders.erase(inProcessOrders.begin() + counter);
-				counter--;
+				inProcessOrders.erase(inProcessOrders.begin() + i);
+				i--;
 			}
 			if (!driver.hasOrdersLeft())
 				wareHouse.deleteVolunteer(driverId);
 
 		}
-	counter++;
+		//if the order is collecting
+		else if(order->getStatus() == OrderStatus::COLLECTING){ 
+			cout <<to_string(order->getId()) + " collecting "<< endl; //print to delete
+            int collectorId = order->getCollectorId();
+            CollectorVolunteer &collector = dynamic_cast<CollectorVolunteer&>(wareHouse.getVolunteer(collectorId));
+			cout <<collector.getName()<< endl; //print to delete
+			cout<<to_string(collector.getTimeLeft()) +" time left" <<endl; //print to delete
+            collector.step();
+			cout<<to_string(collector.getTimeLeft()) +" time left"<<endl; //print to delete
+            if (collector.getActiveOrderId() == NO_ORDER) {
+				pendingOrders.push_back(order);
+				inProcessOrders.erase(inProcessOrders.begin() + i);
+                i--;
+            }
+            if (!collector.hasOrdersLeft()) 
+                wareHouse.deleteVolunteer(collectorId);
+        }	
     }
 }	
 			
@@ -111,41 +98,45 @@ void SimulateStep::assignVolunteer(WareHouse &wareHouse){
 	vector<Order*> &pendingOrders = wareHouse.getPendingOrders();
 	vector<Volunteer*> &volunteers = wareHouse.getVolunteers();
 	vector<Order*> &inProcessOrders = wareHouse.getinProcessOrders();
-	int sizeVolunteers = volunteers.size();
 
-	
-	for (vector<Order *>::size_type i = 0; i < pendingOrders.size(); i++){
+	for (vector<Order *>::size_type i = 0; i < pendingOrders.size(); i++){		
+		Order* order =pendingOrders[i];
 
-		if(pendingOrders[i]->getStatus() ==  OrderStatus::COLLECTING){ //if the order is pending for driver
+		// if the order is pending for driver
+		if(order->getStatus() ==  OrderStatus::COLLECTING){ 
+			cout << to_string(order->getId())+ " " + order->OrderStatusToString() << endl; //print to delete
 			bool isAssigned = false;
-			for (int j = 0; j< sizeVolunteers && !isAssigned; j++){
-				if (!(*volunteers[j]).isCollector()  && (volunteers[j]->canTakeOrder(*pendingOrders[i]))){
-						(*volunteers[j]).acceptOrder(*pendingOrders[i]); 
-						(*pendingOrders[i]).setStatus(OrderStatus::DELIVERING); 
-						(*pendingOrders[i]).setDriverId((*volunteers[j]).getId()); 
+			for (vector<Volunteer *>::size_type j = 0; j< volunteers.size() && !isAssigned; j++){
+				if (!((*volunteers[j]).isCollector())  && (volunteers[j]->canTakeOrder(*order))){
+						(*volunteers[j]).acceptOrder(*order); 
+						order->setStatus(OrderStatus::DELIVERING); 
+						order->setDriverId((*volunteers[j]).getId()); 
 						isAssigned = true;
-						inProcessOrders.push_back(pendingOrders[i]);
+						inProcessOrders.push_back(order);
 						pendingOrders.erase(pendingOrders.begin() + i);// Move the order from pendingOrders to inProcessOrders
 						i--;
 				}
 			}
-
+			cout << to_string(order->getId())+ " " + order->OrderStatusToString() << endl; //print to delete
 		}
-		else if(pendingOrders[i]->getStatus() ==  OrderStatus::PENDING){ //if the order is pending for collector
+
+		//if the order is pending for collector
+		if(order->getStatus() ==  OrderStatus::PENDING){ 
+			cout << to_string(order->getId())+ " " + order->OrderStatusToString() << endl; //print to delete
 			bool isAssigned = false;
 			for (vector<Volunteer *>::size_type j = 0; j < volunteers.size() && !isAssigned; j++){
-				if ((*volunteers[j]).isCollector()  && (volunteers[j]->canTakeOrder(*pendingOrders[i]))){
-					(*volunteers[j]).acceptOrder(*pendingOrders[i]); //accept the order
-					(*pendingOrders[i]).setStatus(OrderStatus::COLLECTING); //change the order status
-					(*pendingOrders[i]).setCollectorId((*volunteers[j]).getId()); //change the order collector id
+				if ((*volunteers[j]).isCollector()  && (volunteers[j]->canTakeOrder(*order))){
+					(*volunteers[j]).acceptOrder(*order); 
+					order->setStatus(OrderStatus::COLLECTING); 
+					order->setCollectorId((*volunteers[j]).getId()); 
 					isAssigned = true;
-					inProcessOrders.push_back(pendingOrders[i]);
+					inProcessOrders.push_back(order);
 					pendingOrders.erase(pendingOrders.begin() + i);// Move the order from pendingOrders to inProcessOrders
 					i--;
 				}
 			}
+			cout << to_string(order->getId())+ " " + order->OrderStatusToString() << endl; //print to delete
 		}
-
 	}
 }
 	
