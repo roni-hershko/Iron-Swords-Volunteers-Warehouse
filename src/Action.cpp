@@ -68,8 +68,7 @@ void SimulateStep::makeTheStep(WareHouse &wareHouse){
 		if(order->getStatus() == OrderStatus::COLLECTING){ 
             int collectorId = order->getCollectorId();
             CollectorVolunteer &collector = dynamic_cast<CollectorVolunteer&>(wareHouse.getVolunteer(collectorId));
-			cout <<collector.getName()<< endl;
-			cout<<to_string(collector.getTimeLeft())<<endl; ///////////////////////////////////////
+
             collector.step(); //step the collector
 			// if order has finished collecting move to pendingOrders vector
 			cout<<to_string(collector.getTimeLeft())<<endl; ///////////////////////////////////////
