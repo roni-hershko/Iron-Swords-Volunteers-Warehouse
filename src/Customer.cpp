@@ -51,11 +51,7 @@ SoldierCustomer::SoldierCustomer(int id, const string &name, int locationDistanc
 	: Customer(id, name, locationDistance, maxOrders) {}
 
 SoldierCustomer* SoldierCustomer::clone() const {
-	SoldierCustomer* newSoldierCustomer= new SoldierCustomer(*this);
-	for(int i=0; i<newSoldierCustomer->getNumOrders(); i++){
-		newSoldierCustomer->addOrder(getOrdersIds()[i]);
-	}
-	return newSoldierCustomer;
+	return new SoldierCustomer(*this);
 }
 
 
@@ -63,11 +59,7 @@ CivilianCustomer::CivilianCustomer(int id, const string &name, int locationDista
 	: Customer(id, name, locationDistance, maxOrders) {}
 	
 CivilianCustomer* CivilianCustomer::clone() const{
-    CivilianCustomer* newCivilianCustomer= new CivilianCustomer(*this);
-    for(int i=0; i<newCivilianCustomer->getNumOrders(); i++){
-        newCivilianCustomer->addOrder(getOrdersIds()[i]);
-    }
-    return newCivilianCustomer;
+    return new CivilianCustomer(*this);
 }
         
         
