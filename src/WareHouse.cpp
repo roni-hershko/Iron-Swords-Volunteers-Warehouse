@@ -69,12 +69,14 @@ WareHouse::WareHouse(const string &configFilePath)
             volunteerCounter++;
         }
     }
-	std::cout << to_string(customers[0]->getId()) << customers[0]->getName() << to_string(customers[0]->getCustomerDistance()) << to_string(customers[0]->getMaxOrders()) <<endl;
-	std::cout << to_string(customers[1]->getId()) << customers[1]->getName() << to_string(customers[1]->getCustomerDistance()) << to_string(customers[1]->getMaxOrders()) <<endl;
-	std::cout << volunteers[0]->toString()  << endl;
-	std::cout << volunteers[1]->toString() << endl;
-	std::cout << volunteers[2]->toString() << endl;
-	std::cout << volunteers[3]->toString() << endl;
+    configFile.close();
+
+	// std::cout << to_string(customers[0]->getId()) << customers[0]->getName() << to_string(customers[0]->getCustomerDistance()) << to_string(customers[0]->getMaxOrders()) <<endl;
+	// std::cout << to_string(customers[1]->getId()) << customers[1]->getName() << to_string(customers[1]->getCustomerDistance()) << to_string(customers[1]->getMaxOrders()) <<endl;
+	// std::cout << volunteers[0]->toString()  << endl;
+	// std::cout << volunteers[1]->toString() << endl;
+	// std::cout << volunteers[2]->toString() << endl;
+	// std::cout << volunteers[3]->toString() << endl;
 }
 
 //Rule of 5
@@ -296,7 +298,6 @@ void WareHouse::getUserCommand(){
 
 void WareHouse::addOrder(Order* order){ 
 	pendingOrders.push_back(order);
-	std::cout << "Order " << to_string(pendingOrders[orderCounter]->getId())<< " was added successfully" << std::endl;
 	orderCounter++;
 }
 

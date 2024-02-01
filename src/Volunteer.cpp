@@ -54,9 +54,8 @@ int CollectorVolunteer::getTimeLeft() const{
 bool CollectorVolunteer::decreaseCoolDown(){
      if (timeLeft > 0) {
         timeLeft--;
-        return timeLeft == 0;
     }
-    return false;
+    return timeLeft == 0;
 }
 
 bool CollectorVolunteer::hasOrdersLeft() const{
@@ -172,12 +171,9 @@ void DriverVolunteer::acceptOrder(const Order &order){
 }
 
 void DriverVolunteer::step(){
-    if (distanceLeft > 0){
-        distanceLeft -= distancePerStep;
-        if (distanceLeft <= 0){
-            completedOrderId = activeOrderId;
-            activeOrderId = NO_ORDER;
-        }
+    if (decreaseDistanceLeft()) {
+        completedOrderId = activeOrderId;
+        activeOrderId = NO_ORDER;
     }
 }
 
