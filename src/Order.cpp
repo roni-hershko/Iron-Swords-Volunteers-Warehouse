@@ -75,10 +75,6 @@ const string Order::toString() const {
 	return str;
  } 
 
-Order *Order::clone() const{
-    return new Order(*this);
-} // new method
-
 string Order::OrderStatusToString(){
 	if(status == OrderStatus::PENDING)
 		return "PENDING";
@@ -88,3 +84,7 @@ string Order::OrderStatusToString(){
 		return "DELIVERING";
 	return "COMPLETED";
 }
+
+Order *Order::clone() const{
+	return new Order(*this);
+} 

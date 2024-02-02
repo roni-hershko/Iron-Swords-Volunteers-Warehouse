@@ -33,9 +33,6 @@ class Volunteer {
 	private:
 		const int id;
 		const string name;
-    
-
-
 };
 
 
@@ -54,6 +51,7 @@ class CollectorVolunteer: public Volunteer {
         bool isCollector () const override; //new
 		bool isLimited() const override; //new
 		string toString() const override;
+		void setTimeLeft(int newTimeLeft) ;
     
     private:
         const int coolDown; // The time it takes the volunteer to process an order
@@ -73,6 +71,7 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
         int getNumOrdersLeft() const;
 		bool isLimited() const override; //new
 		string toString() const override;
+		void setOrdersLeft(int newOrdersLeft);
     
     private:
         const int maxOrders; // The number of orders the volunteer can process in the whole simulation
@@ -95,6 +94,7 @@ class DriverVolunteer: public Volunteer {
         void step() override; // Decrease distanceLeft by distancePerStep
 		bool isLimited() const override; //new
         string toString() const override;
+		void setDistanceLeft(int newDistanceLeft);
 
     private:
         const int maxDistance; // The maximum distance of ANY order the volunteer can take
@@ -114,6 +114,7 @@ class LimitedDriverVolunteer: public DriverVolunteer {
         void acceptOrder(const Order &order) override; // Assign distanceLeft to order's distance and decrease ordersLeft
 		bool isLimited() const override; //new
 		string toString() const override;
+		void setOrdersLeft(int newOrdersLeft);
 
 
     private:
