@@ -70,13 +70,6 @@ WareHouse::WareHouse(const string &configFilePath)
         }
     }
     configFile.close();
-
-	// std::cout << to_string(customers[0]->getId()) << customers[0]->getName() << to_string(customers[0]->getCustomerDistance()) << to_string(customers[0]->getMaxOrders()) <<endl;
-	// std::cout << to_string(customers[1]->getId()) << customers[1]->getName() << to_string(customers[1]->getCustomerDistance()) << to_string(customers[1]->getMaxOrders()) <<endl;
-	// std::cout << volunteers[0]->toString()  << endl;
-	// std::cout << volunteers[1]->toString() << endl;
-	// std::cout << volunteers[2]->toString() << endl;
-	// std::cout << volunteers[3]->toString() << endl;
 }
 
 //Rule of 5
