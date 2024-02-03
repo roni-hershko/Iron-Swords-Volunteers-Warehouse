@@ -321,7 +321,6 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse){
 				cout << "isBusy: false" << endl;
 				cout << "OrderID: None" << endl; 	
 				cout << "timeLeft: None" << endl; 
-				cout << "ordersLeft: No Limit" << endl; 
 			}
 			else{
 				cout << "isBusy: true" << endl; 
