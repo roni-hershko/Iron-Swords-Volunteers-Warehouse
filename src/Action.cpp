@@ -327,33 +327,33 @@ void PrintVolunteerStatus::act(WareHouse &wareHouse){
 				cout << "isBusy: true" << endl; 
 				cout << "OrderID: " + std::to_string(volunteer.getActiveOrderId())<< endl; 
 				cout << "timeLeft: " + std::to_string(collector.getTimeLeft()) << endl; 
-				if(collector.isLimited()){
-					LimitedCollectorVolunteer &limitedCollector = dynamic_cast<LimitedCollectorVolunteer&>(volunteer);
-					cout << "ordersLeft: " + std::to_string(limitedCollector.getNumOrdersLeft()) << endl;
-				}	
-				else
-					cout << "ordersLeft: No Limit" << endl;
 			}
+			if(collector.isLimited()){
+				LimitedCollectorVolunteer &limitedCollector = dynamic_cast<LimitedCollectorVolunteer&>(volunteer);
+				cout << "ordersLeft: " + std::to_string(limitedCollector.getNumOrdersLeft()) << endl;
+			}	
+			else
+				cout << "ordersLeft: No Limit" << endl;
+			
 		}	
 		else{ //if the volunteer is a driver
 			DriverVolunteer &driver = dynamic_cast<DriverVolunteer&>(volunteer);
 			if(!driver.isBusy()){
 				cout << "isBusy: false" << endl;
 				cout << "OrderID: None" << endl; 	
-				cout << "timeLeft: None" << endl; 
-				cout << "ordersLeft: No Limit" << endl; 
+				cout << "distanceLeftc: None" << endl; 
 			}	
 			else{	
 				cout << "isBusy: true" << endl; //check if bool can be printed
 				cout << "OrderID: " + std::to_string(volunteer.getActiveOrderId())<< endl;
-				cout << "distanceLeft: " + std::to_string(driver.getDistanceLeft()) << endl; 
-				if (driver.isLimited()){
-					LimitedDriverVolunteer &limitedDriver = dynamic_cast<LimitedDriverVolunteer&>(volunteer);
-					cout << "ordersLeft: " + std::to_string(limitedDriver.getNumOrdersLeft()) << endl;
-				}
-				else
-					cout << "ordersLeft: No Limit" << endl;
+				cout << "distanceLeft: " + std::to_string(driver.getDistanceLeft()) << endl;
+			} 
+			if (driver.isLimited()){
+				LimitedDriverVolunteer &limitedDriver = dynamic_cast<LimitedDriverVolunteer&>(volunteer);
+				cout << "ordersLeft: " + std::to_string(limitedDriver.getNumOrdersLeft()) << endl;
 			}
+			else
+				cout << "ordersLeft: No Limit" << endl;
 		}	
 	}
 }
